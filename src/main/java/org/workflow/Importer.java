@@ -35,6 +35,8 @@ public class Importer {
             System.exit(0);
         }
         System.out.println("\n------------Importing Now------------\n");
+
+        //do not change the order unless you really need to, may cause problems
         importQualifications();
         importPersons();
         importResources();
@@ -208,6 +210,7 @@ public class Importer {
         }
 
     }
+
     private static ResIterator retrieveIterator(Property property){
         return baseModel.listResourcesWithProperty(property);
     }
