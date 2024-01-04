@@ -11,6 +11,7 @@ import java.util.*;
 public class Workflow {
 
     // at this time workflows can have only one start Task and one endTask
+    // moreover the simulator only works with linear workflows
     @Setter
     private Task startTask;
     @Setter
@@ -21,12 +22,14 @@ public class Workflow {
     private Map<String, Task> quickAccess;
 
     private static int idCounter = 0 ;
+
     public Workflow(Task startTask){
         this.id= idCounter++;
         queuedEvents = new PriorityQueue<>(comparingEvents);
         this.startTask= startTask;
         System.out.println(this);
     }
+
     public Workflow(Task startTask, Task endTask, List<Task> innerTasks){
         this.id= idCounter++;
         queuedEvents = new PriorityQueue<>(comparingEvents);
@@ -44,7 +47,7 @@ public class Workflow {
         eventListener.start();
     }
 
-    Map<String, TaskRunConcept> tasksThatAreCurrentlyBeingWorkedOn;
+    private Map<String, TaskRunConcept> tasksThatAreCurrentlyBeingWorkedOn;
 
     public void addInnerTask(Task t){
         innerTasks.add(t);
@@ -179,15 +182,22 @@ public class Workflow {
                 ", comparingEvents=" + comparingEvents +
                 '}';
     }
+
+    /**
+     * a helper class to map currently running tasks, the thread that is executing this task and the event that is currently
+     * at this task in one object
+     */
     private static class TaskRunConcept{
 
         public Event e;
         public Thread t;
         public Task task;
+
         TaskRunConcept(Event e, Task task){
             this.e=e;
             this.task=task;
         }
+
         public void start(){
             t= new Thread(task::runSelf);
             t.start();

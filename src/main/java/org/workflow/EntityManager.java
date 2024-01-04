@@ -9,6 +9,10 @@ import java.util.Map;
 
 public class EntityManager {
 
+    /**
+     * every instance that was imported from the ontology is safed here
+     */
+
     public static List<Event> allEvents;
     public static List<Person> allPersons;
     public static List<Resource> allResources;
@@ -51,6 +55,7 @@ public class EntityManager {
     public static void addResource(String name){
         allResources.add(new Resource(name));
     }
+
     public static void addQualification(String name){
         allQualifications.add(new Qualifikation(name));
     }
@@ -99,6 +104,8 @@ public class EntityManager {
         sortTasksAndFindWorkflows();
 
     }
+
+
 
     private static void sortTasksAndFindWorkflows(){
         allTasks.forEach(task->{
