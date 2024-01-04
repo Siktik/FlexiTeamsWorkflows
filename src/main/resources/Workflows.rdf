@@ -108,7 +108,7 @@
     </owl:DatatypeProperty>
     
 
-
+<!-- -->
     <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#hasPriority -->
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#hasPriority">
