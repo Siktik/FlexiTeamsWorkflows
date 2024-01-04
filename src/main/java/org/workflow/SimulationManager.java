@@ -20,10 +20,10 @@ public class SimulationManager {
                 EntityManager.sortedTasks.get(EntityManager.WorkflowTaskType.INNERTASK));
 
 
-        runSimulation();
+
     }
 
-    private static void runSimulation(){
+    public static void runSimulation(){
 
         TimeManager.startTimeManager();
 

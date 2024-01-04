@@ -3,6 +3,8 @@ package org.workflow.Classes;
 import lombok.Getter;
 import lombok.Setter;
 import org.workflow.TimeManager;
+import org.workflow.printer.Printer;
+import org.workflow.printer.Sources;
 
 import java.sql.Time;
 import java.util.LinkedList;
@@ -90,8 +92,8 @@ public class Task {
     public synchronized void runSelf(){
         start= TimeManager.getSimTime();
         int lastOutput = start;
-        System.out.println("starting Task "+ name);
-        System.out.println(name+" needs "+ timeNeeded +" seconds starting at simTime "+ start);
+        Printer.print(Sources.Task.name()+name, "starting Task now needs "+ timeNeeded +" seconds starting at simTime "+ start);
+
 
         while(TimeManager.getSimTime()- start < timeNeeded){
 
