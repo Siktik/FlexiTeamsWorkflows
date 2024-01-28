@@ -1,0 +1,676 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10/"
+     xml:base="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:untitled-ontology-10="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#">
+    <owl:Ontology rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#bindResource -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#bindResource">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceActions"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
+        <rdfs:comment>wenn true, dann fordert dieser Task vom vorangegangenen Task eine Resource, die dort verwendet bzw bearbeitet wurde, bspw. das weiterreichen von Formularen zwischen Anamnese und dem behandelnden Arzt
+
+es wird dementsprechend eine verwendete Resource von dem Typ Resource gebunden, der entlang dieser Property gelinkt wird.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#isOfResourceType -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#isOfResourceType">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#isOfType"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resource"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#isOfType -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#isOfType"/>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#personHasQualification -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#personHasQualification">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#person"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#qualification"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceActions -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceActions">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskSpecifications"/>
+        <rdfs:comment>actions tasks do on resources</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskIsFollowedBy -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskIsFollowedBy">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskSpecifications"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskNeedsQualification -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskNeedsQualification">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskSpecifications"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#qualification"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskNeedsResource -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskNeedsResource">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskSpecifications"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
+        <rdfs:comment>if a task needs multiple resources of the same type, use this property multiple times, each time for every needed resource of that type</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskSpecifications -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskSpecifications"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#eventHasName -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#eventHasName">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#hasName"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#event"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#eventHasStartTime -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#eventHasStartTime">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#hasTimeSpecification"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#event"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+        <rdfs:comment>specify a a value for the time in seconds that this event should occur after simStart</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#eventPriority -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#eventPriority">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#hasPriority"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#event"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#hasName -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#hasName">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:comment>some Name Specification, every Class has exactly one of these relations</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#hasPriority -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#hasPriority">
+        <rdfs:comment>some priority specification as Integer</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#hasTimeSpecification -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#hasTimeSpecification">
+        <rdfs:comment>some time specification in seconds</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#limitedNumber -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#limitedNumber">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#occasions"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
+        <rdfs:comment>dies bedeutet, dass beim importieren die entsprechende Anzahl an Resourcen dieses Typs erstellt wird. Ist der Ressourcen Typ zb &quot;Formular&quot; und der übergebene Integer ist 100, werden 100 Instanzen eines Formulars erstellt.
+
+Nur ganze positive Zahlen angeben</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#numbersOfUse -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#numbersOfUse">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceSpecifications"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resource"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#positiveInteger"/>
+        <rdfs:comment>dies kann auch genutzt werden um für Resourcen des gleichen Typs unterschiedliche Werte festzulegen. Dafür muss diese Propertie an dem jeweiligen Resourcen Individuum spezifiziert werden. Ein Wert entlang dieser Property an einem Individuum Resource überschreibt für das Individuum den Wert der für den Resourcen Typen festeglegt wurde</rdfs:comment>
+        <rdfs:comment>eine 1 bedeutet dass die Resource nur ein einziges Mal verwendet werden kann und dann vernichtet wird (z.B. Formular)
+
+eine 0 bedeutet dass die Resource beliebig oft verwendet werden kann z.B. (Rettungswagen)
+
+eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese nicht mehr genutzt werden kann</rdfs:comment>
+        <rdfs:comment>wird dies für einen resourcen Typen angegeben, wird dies für alle Resourcen des Typs angewendet, die keinen eigenen Wert für diese Propertie haben</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#occasions -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#occasions">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceSpecifications"/>
+        <rdfs:comment>wenn keine dieser Subproperties spezifiziert wird, werden die Individuen erstellt, welche die propertie isOfResourceType haben, die den entsprechenden Resourcen Typ hat</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#personHasName -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#personHasName">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#hasName"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#person"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#qualificationHasName -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#qualificationHasName">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#hasName"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#qualification"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceHasName -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceHasName">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#hasName"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceSpecifications -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceSpecifications"/>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceTypeHasName -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceTypeHasName">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#hasName"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskHasName -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskHasName">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#hasName"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskHasTimeNeeded -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskHasTimeNeeded">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#hasTimeSpecification"/>
+        <rdfs:comment>specify a value in seconds that this task takes from the start to the end of its execution</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskIsEndTask -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskIsEndTask">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskSpecificationDataProperty"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskIsStartTask -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskIsStartTask">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskSpecificationDataProperty"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskPriority -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskPriority">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#hasPriority"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskSpecificationDataProperty -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskSpecificationDataProperty"/>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#unlimited -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#unlimited">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#occasions"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:comment>wenn unlimited &quot;true&quot;, bedeutet das, dass imemr wenn eine Afugabe diese Resource benötigt ist sie verfügbar. Zum Beispiel Formulare auf dem Amt. Wenn dies true ist, müssen keine Individuen für Resourcen dieses Typs erstellt werden, diese werden nicht berücksichtigt.</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#event -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#event">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#eventHasName"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#eventHasStartTime"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#eventPriority"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment>when adding instances for this class, keep in mind to fullfill all rules mentioned via SubClassOf. For explanation refer to https://protegeproject.github.io/protege/class-expression-syntax/</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#person -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#person">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#personHasName"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment>when adding instances for this class, keep in mind to fullfill all rules mentioned via SubClassOf. For explanation refer to https://protegeproject.github.io/protege/class-expression-syntax/</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#qualification -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#qualification">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#qualificationHasName"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resource -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resource">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#isOfResourceType"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceHasName"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceTypeHasName"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskHasName"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskHasTimeNeeded"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskIsEndTask"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskIsStartTask"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskPriority"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment>keep in mind that tasks that are not end Task ened to the property isFollowedBy to be assigned</rdfs:comment>
+        <rdfs:comment>when adding instances for this class, keep in mind to fullfill all rules mentioned via SubClassOf. For explanation refer to https://protegeproject.github.io/protege/class-expression-syntax/</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Qualification:Counsellor -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Qualification:Counsellor">
+        <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#qualification"/>
+        <untitled-ontology-10:qualificationHasName>Counsellor</untitled-ontology-10:qualificationHasName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Qualification:Doctor -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Qualification:Doctor">
+        <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#qualification"/>
+        <untitled-ontology-10:qualificationHasName>Doctor</untitled-ontology-10:qualificationHasName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Qualification:Lab_technician -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Qualification:Lab_technician">
+        <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#qualification"/>
+        <untitled-ontology-10:qualificationHasName>Lab_technician</untitled-ontology-10:qualificationHasName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Qualification:Nurse -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Qualification:Nurse">
+        <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#qualification"/>
+        <untitled-ontology-10:qualificationHasName>Nurse</untitled-ontology-10:qualificationHasName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:AdmissionDetails -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:AdmissionDetails">
+        <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
+        <untitled-ontology-10:resourceTypeHasName>AdmissionDetails</untitled-ontology-10:resourceTypeHasName>
+        <untitled-ontology-10:unlimited rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:unlimited>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Consent_form -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Consent_form">
+        <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
+        <untitled-ontology-10:resourceTypeHasName>Consent_form</untitled-ontology-10:resourceTypeHasName>
+        <untitled-ontology-10:unlimited rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:unlimited>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Diet_Details -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Diet_Details">
+        <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
+        <untitled-ontology-10:resourceTypeHasName>Diet_Details</untitled-ontology-10:resourceTypeHasName>
+        <untitled-ontology-10:unlimited rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:unlimited>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Lab_test -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Lab_test">
+        <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
+        <untitled-ontology-10:resourceTypeHasName>Lab_test</untitled-ontology-10:resourceTypeHasName>
+        <untitled-ontology-10:unlimited rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:unlimited>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Signed_form -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Signed_form">
+        <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
+        <untitled-ontology-10:resourceTypeHasName>Signed_form</untitled-ontology-10:resourceTypeHasName>
+        <untitled-ontology-10:unlimited rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:unlimited>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Stethoscope -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Stethoscope">
+        <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
+        <untitled-ontology-10:resourceTypeHasName>Stethoscope</untitled-ontology-10:resourceTypeHasName>
+        <untitled-ontology-10:unlimited rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:unlimited>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Surgical_dress -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Surgical_dress">
+        <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
+        <untitled-ontology-10:resourceTypeHasName>Surgical_dress</untitled-ontology-10:resourceTypeHasName>
+        <untitled-ontology-10:unlimited rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:unlimited>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:X-ray_machine -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:X-ray_machine">
+        <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
+        <untitled-ontology-10:resourceTypeHasName>X-ray_machine</untitled-ontology-10:resourceTypeHasName>
+        <untitled-ontology-10:unlimited rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:unlimited>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Task:Instruction_to_Patient -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Task:Instruction_to_Patient">
+        <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
+        <untitled-ontology-10:taskIsFollowedBy rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Task:Pre-operative_test"/>
+        <untitled-ontology-10:taskNeedsQualification rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Qualification:Nurse"/>
+        <untitled-ontology-10:taskHasName>Instruction_to_Patient</untitled-ontology-10:taskHasName>
+        <untitled-ontology-10:taskHasTimeNeeded rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">10</untitled-ontology-10:taskHasTimeNeeded>
+        <untitled-ontology-10:taskIsEndTask rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</untitled-ontology-10:taskIsEndTask>
+        <untitled-ontology-10:taskIsStartTask rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</untitled-ontology-10:taskIsStartTask>
+        <untitled-ontology-10:taskPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1</untitled-ontology-10:taskPriority>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Task:Medical_examination -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Task:Medical_examination">
+        <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
+        <untitled-ontology-10:taskIsFollowedBy rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Task:Instruction_to_Patient"/>
+        <untitled-ontology-10:taskNeedsQualification rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Qualification:Doctor"/>
+        <untitled-ontology-10:taskHasName>Medical_examination</untitled-ontology-10:taskHasName>
+        <untitled-ontology-10:taskHasTimeNeeded rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">15</untitled-ontology-10:taskHasTimeNeeded>
+        <untitled-ontology-10:taskIsEndTask rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</untitled-ontology-10:taskIsEndTask>
+        <untitled-ontology-10:taskIsStartTask rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:taskIsStartTask>
+        <untitled-ontology-10:taskPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1</untitled-ontology-10:taskPriority>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Task:Patient_preparation -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Task:Patient_preparation">
+        <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
+        <untitled-ontology-10:taskNeedsQualification rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Qualification:Nurse"/>
+        <untitled-ontology-10:taskHasName>Patient_preparation</untitled-ontology-10:taskHasName>
+        <untitled-ontology-10:taskHasTimeNeeded rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">10</untitled-ontology-10:taskHasTimeNeeded>
+        <untitled-ontology-10:taskIsEndTask rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:taskIsEndTask>
+        <untitled-ontology-10:taskPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1</untitled-ontology-10:taskPriority>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Task:Pre-operative_Counselling_and_Consent -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Task:Pre-operative_Counselling_and_Consent">
+        <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
+        <untitled-ontology-10:taskIsFollowedBy rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Task:Patient_preparation"/>
+        <untitled-ontology-10:taskNeedsQualification rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Qualification:Counsellor"/>
+        <untitled-ontology-10:taskHasName>Pre-operative_Counselling_and_Consent</untitled-ontology-10:taskHasName>
+        <untitled-ontology-10:taskHasTimeNeeded rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">15</untitled-ontology-10:taskHasTimeNeeded>
+        <untitled-ontology-10:taskIsEndTask rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</untitled-ontology-10:taskIsEndTask>
+        <untitled-ontology-10:taskIsStartTask rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</untitled-ontology-10:taskIsStartTask>
+        <untitled-ontology-10:taskPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1</untitled-ontology-10:taskPriority>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Task:Pre-operative_test -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Task:Pre-operative_test">
+        <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
+        <untitled-ontology-10:taskIsFollowedBy rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Task:Pre-operative_Counselling_and_Consent"/>
+        <untitled-ontology-10:taskNeedsQualification rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Qualification:Lab_technician"/>
+        <untitled-ontology-10:taskNeedsQualification rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Qualification:Nurse"/>
+        <untitled-ontology-10:taskHasName>Pre-operative_test</untitled-ontology-10:taskHasName>
+        <untitled-ontology-10:taskHasTimeNeeded rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">15</untitled-ontology-10:taskHasTimeNeeded>
+        <untitled-ontology-10:taskIsEndTask rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</untitled-ontology-10:taskIsEndTask>
+        <untitled-ontology-10:taskIsStartTask rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</untitled-ontology-10:taskIsStartTask>
+        <untitled-ontology-10:taskPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1</untitled-ontology-10:taskPriority>
+    </owl:NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.25.2023-02-15T19:15:49Z) https://github.com/owlcs/owlapi -->
+
