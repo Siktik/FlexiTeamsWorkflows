@@ -8,6 +8,7 @@ import org.workflow.printer.Sources;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Getter
@@ -134,7 +135,7 @@ public class Task {
                 ", isStartTask=" + isStartTask +
                 ", isEndTask=" + isEndTask +
                 ", followingTaskPlaceholder=" + followingTaskPlaceholder +
-                ", followingTasks=" + followingTasks +
+                ", followingTasks=" + followingTasks.stream().map(e-> e.getName()+",").toList() +
                 ", resourcesPlaceholder=" + resourcesPlaceholder +
                 '}';
     }
