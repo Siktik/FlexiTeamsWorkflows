@@ -1,5 +1,10 @@
 package org.workflow;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class PropertyTypes {
 
     /**
@@ -11,7 +16,6 @@ public class PropertyTypes {
      * if you rename any of these String the Importer may fail!!
      * if you rename Strings here for any reason you need to make sure that the property within the Ontology
      * is named the exact same way!!
-     *
      */
 
     static String personName= "personHasName";
@@ -19,6 +23,7 @@ public class PropertyTypes {
     static String resourceName= "resourceHasName";
     static String qualificationName= "qualificationHasName";
     static String taskName= "taskHasName";
+    static String resourceTypeName = "resourceTypeHasName";
     static String eventPriority= "eventPriority";
     static String taskPriority= "taskPriority";
     static String eventHasStartTime= "eventHasStartTime";
@@ -29,6 +34,20 @@ public class PropertyTypes {
     static String taskNeedsQualification= "taskNeedsQualification";
     static String taskNeedsResource = "taskNeedsResource";
     static String taskIsFollowedBy= "taskIsFollowedBy";
+    static String isOfResourceType= "isOfResourceType";
+    static String unlimitedResource= "unlimited";
+
+
+
+    public static Map<ClassTypes, List<String>> propertyRulesMap= new HashMap<>(){{
+        put(ClassTypes.EVENT, Arrays.asList(eventName, eventPriority, eventHasStartTime));
+        put(ClassTypes.TASK, Arrays.asList(taskName, taskIsEndTask, taskIsStartTask, taskPriority, taskNeedsQualification, taskHasTimeNeeded));
+        put(ClassTypes.PERSON, Arrays.asList(personName));
+        put(ClassTypes.RESOURCE, Arrays.asList(resourceName, isOfResourceType));
+        put(ClassTypes.RESOURCETYPE, Arrays.asList(resourceTypeName));
+        put(ClassTypes.QUALIFICATION, Arrays.asList(qualificationName));
+        }
+    };
 
 
 

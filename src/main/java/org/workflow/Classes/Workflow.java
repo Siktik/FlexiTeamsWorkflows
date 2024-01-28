@@ -23,6 +23,14 @@ public class Workflow {
     private int id;
     private Map<String, Task> quickAccess;
 
+    /**
+     * this saves every task that is currently beeing executed
+     * by checking if the thread of a runTaskConcept is interrupted we find tasks that finished their execution
+     * currently only one instance of a task can be executed at a time
+     */
+    private Map<String, TaskRunConcept> tasksThatAreCurrentlyBeingWorkedOn;
+
+
     private static int idCounter = 0 ;
 
     public Workflow(Task startTask){
@@ -49,7 +57,6 @@ public class Workflow {
         eventListener.start();
     }
 
-    private Map<String, TaskRunConcept> tasksThatAreCurrentlyBeingWorkedOn;
 
     public void addInnerTask(Task t){
         innerTasks.add(t);
@@ -189,6 +196,15 @@ public class Workflow {
                 outPutLimiterEventWaiting = TimeManager.getSimTime();
             }
         }
+    }
+
+    private void checkResourcesFeasible(Task task){
+
+
+
+    }
+    private void assignResourcesToTask(Task task, List<Resource> resources){
+
     }
 
     private PriorityQueue<Event> queuedEvents;

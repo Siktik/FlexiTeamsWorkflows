@@ -16,7 +16,7 @@ public class Main {
     public static void main(String[] args) {
         EntityManager.init();
         Importer.importOWL();
-        SimulationManager.init();
-        SimulationManager.runSimulation();
+        //SimulationManager.init();
+        //SimulationManager.runSimulation();
     }
 }

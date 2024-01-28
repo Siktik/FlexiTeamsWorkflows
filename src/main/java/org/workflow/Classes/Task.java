@@ -6,7 +6,6 @@ import org.workflow.TimeManager;
 import org.workflow.printer.Printer;
 import org.workflow.printer.Sources;
 
-import java.sql.Time;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,7 +38,7 @@ public class Task {
      * qualifications needed for this task
      * if qualifications are missing the idea may be to wait until qualification are ready again
      */
-    private List<String> qualificationsNeeded;
+    private List<String> qualificationsNeededPlaceHolder;
     /**
      * whether this task is an startTask, meaning that this task does not follow on any other task
      */
@@ -58,16 +57,30 @@ public class Task {
      */
     private List<Task> followingTasks; // can only be set when all Tasks have been instantiated
     /**
-     * this contains the names of the resources that are needed to execute this task, the linkage to the tasks is made when importing the Ontology
+     * this contains the names of the resourceTypes that are needed to execute this task
      */
     private List<String> resourcesPlaceholder;
+
+
+
+    private List<Qualifikation> qualificationsNeeded;
+
+
+    /**
+     *
+     */
+
+    private boolean allResourcesAssigned = false;
+    private boolean allQualificationsAssigned = false;
+
+
 
 
     public Task(String name, int timeNeeded, boolean isEndTask, boolean isStartTask,
                 List<String> qualificationsNeeded, int priority, List<String> followingTaskPlaceholder,
                 List<String> resourcesPlaceholder){
         this.id= idCounter++;
-        this.qualificationsNeeded= qualificationsNeeded;
+        this.qualificationsNeededPlaceHolder = qualificationsNeeded;
         this.followingTaskPlaceholder= followingTaskPlaceholder;
         this.followingTasks= new LinkedList<>();
         this.name=name;
@@ -117,7 +130,7 @@ public class Task {
                 ", name='" + name + '\'' +
                 ", timeNeeded=" + timeNeeded +
                 ", priority=" + priority +
-                ", qualificationsNeeded=" + qualificationsNeeded +
+                ", qualificationsNeeded=" + qualificationsNeededPlaceHolder +
                 ", isStartTask=" + isStartTask +
                 ", isEndTask=" + isEndTask +
                 ", followingTaskPlaceholder=" + followingTaskPlaceholder +
