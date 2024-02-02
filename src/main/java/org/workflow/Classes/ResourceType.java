@@ -13,7 +13,7 @@ public class ResourceType {
     public ResourceType(String name, boolean unlimited){
         this.name= name;
         setUnlimited(unlimited);
-        System.out.println(this);
+        //System.out.println(this);
     }
 
     @Override

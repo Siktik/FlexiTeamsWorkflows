@@ -42,6 +42,7 @@ public class EntityManager {
      */
     public static Map<WorkflowTaskType, List<Task>> sortedTasks;
 
+    // key: resourceType
     public static Map<String, List<Resource>> allResources;
     public static Map<String, ResourceType> allResourceTypes;
 
@@ -142,7 +143,7 @@ public class EntityManager {
 
     }
     private static void setUpFollowerTask(Task task){
-        Printer.print(Sources.EntityManager.name(), "setting up following task Links for Task with name "+ task.getName());
+        //Printer.print(Sources.EntityManager.name(), "setting up following task Links for Task with name "+ task.getName());
 
         List<Task> followingTasks= new LinkedList<>();
         for(String taskName: task.getFollowingTaskPlaceholder()){
@@ -153,6 +154,7 @@ public class EntityManager {
             }
         }
         task.setFollowingTasks(followingTasks);
+        /*
         StringBuilder builder= new StringBuilder();
 
         task.getFollowingTaskPlaceholder().forEach(builder::append);
@@ -163,6 +165,8 @@ public class EntityManager {
         Printer.print(Sources.EntityManager.name(), "Found tasks with names: "+ builder);
 
         System.out.println();
+
+         */
     }
 
     private static void setUpQualifications(Task task){
@@ -177,6 +181,7 @@ public class EntityManager {
             }
         }
         task.setQualificationsNeeded(List.of(qualificationNeeded));
+        /*
         StringBuilder builder= new StringBuilder();
 
         task.getQualificationsNeeded().forEach(builder::append);
@@ -187,6 +192,8 @@ public class EntityManager {
         Printer.print(Sources.EntityManager.name(), "Found resources with names: "+ builder);
 
         System.out.println();
+
+         */
 
     }
 

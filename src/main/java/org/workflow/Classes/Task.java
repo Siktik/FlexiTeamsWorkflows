@@ -90,7 +90,7 @@ public class Task {
         this.isStartTask=isStartTask;
         this.priority=priority;
         this.resourcesPlaceholder= resourcesPlaceholder;
-        System.out.println(this);
+        //System.out.println(this);
     }
     public int start;
 

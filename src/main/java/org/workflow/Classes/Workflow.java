@@ -82,8 +82,10 @@ public class Workflow {
 
         while(working) {
 
-               // don't change order
+
+                // don't change order
                 checkTaskProgression();
+
                 checkTasksWaitingForFurtherExecution();
                 checkIncomingEvents();
 

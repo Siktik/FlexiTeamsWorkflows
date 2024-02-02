@@ -37,7 +37,7 @@ public class Event {
         this.priority= priority;
         this.startTime=startTime;
         nextTask= "StartTask";
-        System.out.println(this);
+        //System.out.println(this);
     }
 
 

@@ -73,13 +73,23 @@ public class Importer {
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("print Details for all Entities? (Enter 'y' for Yes, 'n' for No)");
+        System.out.println("print Details for Entities? (Enter 'y' for Yes, 'n' for No)");
 
         while (true) {
             String input = scanner.nextLine().toLowerCase();
 
             if (input.equals("y")) {
                 Printer.printEntityDetails(true, null);
+                /*System.out.println("print Details for all Entities type \"all\"? Else type \"E\"(Event) or \"T\"(Task), or\"R\"(Resource)" +
+                        " or \"Q\"(Qualification) or \"RT\"(ResourceType) or \"Person\" (Enter 'y' for Yes, 'n' for No)");
+                while(true){
+
+                    input= scanner.nextLine().toLowerCase();
+                    if(input.equals("all")){
+                        Printer.printEntityDetails(true, null);
+                        break;
+                    }
+                }*/
                 break;
             } else if (input.equals("n")) {
                 break;
@@ -92,7 +102,7 @@ public class Importer {
 
     private static void setUpModel() throws Exception{
 
-        String owlFilePath = "C:/Users/maxsp/IdeaProjects/Workflows/src/main/resources/experimental.rdf";
+        String owlFilePath = "src/main/resources/WorkflowsOntology.rdf";
         ontModel= ModelFactory.createOntologyModel();
         InputStream inputStream = new FileInputStream(owlFilePath);
         ontModel.read(inputStream, null, "RDF/XML");

@@ -481,6 +481,17 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
     
 
 
+    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Event:event1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Event:event1">
+        <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#event"/>
+        <untitled-ontology-10:eventHasName>event1</untitled-ontology-10:eventHasName>
+        <untitled-ontology-10:eventHasStartTime rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">5</untitled-ontology-10:eventHasStartTime>
+        <untitled-ontology-10:eventPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1</untitled-ontology-10:eventPriority>
+    </owl:NamedIndividual>
+    
+
+
     <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Qualification:Counsellor -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Qualification:Counsellor">

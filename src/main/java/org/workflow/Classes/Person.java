@@ -12,7 +12,7 @@ public class Person {
         this.id= idCounter++;
         this.qualifications= qualifications;
         this.name=name;
-        System.out.println(this);
+        //System.out.println(this);
     }
 
     public void addQualification(String qualificationName){

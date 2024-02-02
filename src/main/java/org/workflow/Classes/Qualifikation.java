@@ -9,7 +9,7 @@ public class Qualifikation {
     public Qualifikation(String name){
         this.id=idCounter++;
         this.name=name;
-        System.out.println(this);
+        //System.out.println(this);
     }
 
     public String getName() {

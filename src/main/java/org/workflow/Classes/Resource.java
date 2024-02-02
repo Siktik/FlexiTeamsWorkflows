@@ -14,7 +14,7 @@ public class Resource {
         this.id=idCounter++;
         this.name=name;
         this.type= type;
-        System.out.println(this);
+        //System.out.println(this);
     }
 
     public String getName() {
