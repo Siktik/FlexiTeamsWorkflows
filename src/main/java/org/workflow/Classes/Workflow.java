@@ -33,25 +33,33 @@ public class Workflow {
 
     private static int idCounter = 0 ;
 
+    private List<ParallelExecution> parallelExecutions;
 
-
-    public Workflow(Task startTask, Task endTask, List<Task> innerTasks){
+    public Workflow(String name, Task startTask, Task endTask, List<ParallelExecution> parallelExecutions){
         this.id= idCounter++;
         queuedEvents = new PriorityQueue<>(comparingEvents);
         needsFurtherExecution= new PriorityQueue<>(comparingEvents);
         quickAccess = new HashMap<>();
         quickAccess.put(startTask.getName(), startTask);
         quickAccess.put(endTask.getName(), endTask);
-        innerTasks.forEach(e-> quickAccess.put(e.getName(), e));
+        //innerTasks.forEach(e-> quickAccess.put(e.getName(), e));
         this.startTask= startTask;
         this.endTask= endTask;
-        this.innerTasks= innerTasks;
-        Printer.print(Sources.Workflow.name(), toString());
+        //this.innerTasks= innerTasks;
+        this.parallelExecutions= parallelExecutions;
         tasksThatAreCurrentlyBeingWorkedOn= new Hashtable<>();
         Thread eventListener= new Thread(this::runWorkflow);
         eventListener.start();
     }
 
+    @Override
+    public String toString() {
+        return "Workflow{" +
+                "startTask=" + startTask.getName() +
+                ", endTask=" + endTask.getName() +
+                ", parallelExecutions=" + parallelExecutions +
+                '}';
+    }
 
     public void addInnerTask(Task t){
         innerTasks.add(t);
@@ -218,19 +226,6 @@ public class Workflow {
         }
     };
 
-
-    @Override
-    public String toString() {
-        return "Workflow{" +
-                "startTask=" + startTask +
-                ", endTask=" + endTask +
-                ", innerTasks=" + innerTasks +
-                ", id=" + id +
-                ", working=" + working +
-                ", queuedEvents=" + queuedEvents +
-                ", comparingEvents=" + comparingEvents +
-                '}';
-    }
 
     /**
      * a helper class to map currently running tasks, the thread that is executing this task and the event that is currently

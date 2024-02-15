@@ -43,6 +43,12 @@ public class EntityManager {
     public static Hashtable<String, List<Resource>> allResources;
     public static Hashtable<String, ResourceType> allResourceTypes;
 
+    /**
+     * only the use of one workflow is currently safe and implemented
+     */
+    public static Hashtable<String, Workflow> allWorkflows;
+
+
 
 
     public static void init(){
@@ -53,10 +59,38 @@ public class EntityManager {
         allTasks= new Hashtable<>();
         allQualifications= new Hashtable<>();
         allParallelExecutionEntities= new Hashtable<>();
+        allWorkflows= new Hashtable<>();
 
 
 
     }
+    public static void addWorkflow(String name, String startTask, String endTask, List<String> parallelExecutionEntities){
+        if(!allWorkflows.containsKey(name)){
+            List<ParallelExecution> parallelExecutions= parallelExecutionEntities.stream().map(e-> allParallelExecutionEntities.get(e)).toList();
+            List<Task> innerTasks= new LinkedList<>();
+            Task startingOnTask =allTasks.get(startTask);
+
+            if(startingOnTask == null){
+                Printer.errorPrint(Sources.EntityManager.name(), "There is no Task with the name "+ startTask+" when importing a " +
+                        "Workflow Entity that needs this task\n Terminating");
+                System.exit(-1);
+            }
+            Task endingOnTask =allTasks.get(endTask);
+            if(endingOnTask == null){
+                Printer.errorPrint(Sources.EntityManager.name(), "There is no Task with the name "+ endTask+" when importing a " +
+                        "Workflow Entity that needs this task\n Terminating");
+                System.exit(-1);
+            }
+
+            allWorkflows.put(name, new Workflow(name, allTasks.get(startTask), allTasks.get(endTask), parallelExecutions));
+        }else{
+            System.err.println("Did not instantiate a second Workflow with the name :"+ name+" \n" +
+                    "names have to be unique!!!!\n##################\n#################\n#################\n#################");
+        }
+    }
+
+
+
     public static void addParallelExecutionEntity(String name, String startingOnTaskName, String endingOnTaskName){
 
         if(!allParallelExecutionEntities.containsKey(name)){

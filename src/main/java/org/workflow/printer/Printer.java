@@ -129,6 +129,10 @@ public class Printer {
                 System.out.println("\nAll ParallelExecutionEntities:\n");
                 EntityManager.allParallelExecutionEntities.values().forEach(System.out::println);
             }
+            case WORKFLOW -> {
+                System.out.println("\nAll Workflows:\n");
+                EntityManager.allWorkflows.values().forEach(System.out::println);
+            }
         }
     }
 }

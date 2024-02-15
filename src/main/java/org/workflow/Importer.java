@@ -5,6 +5,7 @@ import org.apache.jena.ontology.OntModel;
 import org.apache.jena.rdf.model.*;
 import org.workflow.Classes.Event;
 import org.workflow.Classes.ResourceType;
+import org.workflow.Classes.Task;
 import org.workflow.printer.Printer;
 import org.workflow.printer.Sources;
 
@@ -66,6 +67,7 @@ public class Importer {
         importEvents();
         importTasks();
         importParallelExecutionEntities();
+        importWorkflow();
 
         EntityManager.findEntitiesForPlaceholders();
 
@@ -168,6 +170,46 @@ public class Importer {
         }
 
     }
+
+    private static void importWorkflow(){
+        ResIterator iterator= retrieveIterator(workflowName);
+        Property endTaskIsProperty= ontModel.getProperty(ontologyPrefix+ PropertyTypes.isEndOfWorkflow);
+        Property startTaskIsProperty= ontModel.getProperty(ontologyPrefix+ PropertyTypes.isStartOfWorkflow);
+        Property hasParallelExecution= ontModel.getProperty(ontologyPrefix+ PropertyTypes.hasParallelExecution);
+
+
+        while(iterator.hasNext()){
+            Resource resource= iterator.nextResource();
+            String name = resource.getProperty(workflowName).getObject().asLiteral().getString();
+            Statement endTaskIsStatement= resource.getProperty(endTaskIsProperty);
+            Statement startTaskIsStatement= resource.getProperty(startTaskIsProperty);
+            String startTaskName="";
+            String endTaskName="";
+            if(endTaskIsStatement!= null){
+                endTaskName= endTaskIsStatement.getResource().getProperty(taskName).getObject().asLiteral().getString();
+            }else{
+                Printer.errorPrint(Sources.Importer.name(), "No endTask specified for workflow "+ name+" terminating");
+                System.exit(-1);
+            }
+            if(startTaskIsStatement!= null){
+                startTaskName= startTaskIsStatement.getResource().getProperty(taskName).getObject().asLiteral().getString();
+            }else{
+                Printer.errorPrint(Sources.Importer.name(), "No startTask specified for workflow "+ name+" terminating");
+                System.exit(-1);
+            }
+            StmtIterator iter = resource.listProperties(hasParallelExecution);
+            List<String> parallelExecutionNames= new LinkedList<>();
+            if(iter!= null){
+                while(iter.hasNext()){
+                    Statement st = iter.nextStatement();
+                    String parallelExecution= st.getObject().asResource().getProperty(parallelExecutionName).getObject().asLiteral().getString();
+                    parallelExecutionNames.add(parallelExecution);
+                }
+            }
+            EntityManager.addWorkflow(name, startTaskName, endTaskName, parallelExecutionNames);
+
+        }
+    }
     private static void importResourceTypes(){
         ResIterator iterator= retrieveIterator(resourceTypeName);
         Property unlimitedResources = baseModel.getProperty(ontologyPrefix+PropertyTypes.unlimitedResource);
@@ -175,21 +217,21 @@ public class Importer {
             Resource resource= iterator.nextResource();
             Statement statement= resource.getProperty(resourceTypeName);
 
-            if(statement != null){
 
-                String name = statement.getObject().asLiteral().getString();
-                boolean unlimitedResource = false;
-                try{
-                    unlimitedResource = resource.getProperty(unlimitedResources).getObject().asLiteral().getBoolean();
-                }catch (NullPointerException e){
-                    //distinguish between optional and mandatory properties, if mandatory missing dont initialize an instance, throw error and continue
-                    //if optional missing default will be used
-                    System.err.println("unlimited property not there");
-                }
-                if(name!=null){
-                    EntityManager.addResourceType(name, unlimitedResource);
-                }
+
+            String name = statement.getObject().asLiteral().getString();
+            boolean unlimitedResource = false;
+            Statement unlimitedResourceStatement= resource.getProperty(unlimitedResources);
+
+            if(unlimitedResourceStatement!=null){
+                unlimitedResource = unlimitedResourceStatement.getObject().asLiteral().getBoolean();
+            }else{
+                System.err.println("unlimited property not there");
             }
+
+            EntityManager.addResourceType(name, unlimitedResource);
+
+
         }
     }
 
