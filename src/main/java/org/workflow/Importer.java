@@ -1,5 +1,6 @@
 package org.workflow;
 
+import org.apache.jena.base.Sys;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.rdf.model.*;
 import org.workflow.Classes.Event;
@@ -36,6 +37,7 @@ public class Importer {
 
     /**
      * via the property name, which has to be assigned to every instance we can find every instance
+     * instances that do not have a name property according to their type/class wont be imported, another reason everything may fail
      */
     private static Property eventName;
     private static Property qualificationName;
@@ -43,6 +45,8 @@ public class Importer {
     private static Property resourceName;
     private static Property personName;
     private static Property resourceTypeName;
+    private static Property parallelExecutionName;
+    private static Property workflowName;
 
 
     public static void importOWL() {
@@ -61,6 +65,8 @@ public class Importer {
         importResources();
         importEvents();
         importTasks();
+        importParallelExecutionEntities();
+
         EntityManager.findEntitiesForPlaceholders();
 
         Printer.print(Sources.Importer.name(), "Done Importing, numbers are:" +
@@ -69,7 +75,9 @@ public class Importer {
                 "\nPersons: "+ EntityManager.allPersons.size()+
                 "\nResourcesTypes: "+ EntityManager.allResources.keySet().size()+
                 "\nResources: "+ EntityManager.allResources.values().stream().mapToLong(List::size).sum()+
-                "\nQualifications: "+ EntityManager.allQualifications.size());
+                "\nQualifications: "+ EntityManager.allQualifications.size()+
+                "\nParallelExecutionEntities: "+ EntityManager.allParallelExecutionEntities.size()
+        );
 
         Scanner scanner = new Scanner(System.in);
 
@@ -102,7 +110,7 @@ public class Importer {
 
     private static void setUpModel() throws Exception{
 
-        String owlFilePath = "src/main/resources/WorkflowsOntology.rdf";
+        String owlFilePath = "src/main/resources/experimental.rdf";
         ontModel= ModelFactory.createOntologyModel();
         InputStream inputStream = new FileInputStream(owlFilePath);
         ontModel.read(inputStream, null, "RDF/XML");
@@ -122,6 +130,42 @@ public class Importer {
         personName= baseModel.getProperty(ontologyPrefix+ PropertyTypes.personName);
         resourceName= baseModel.getProperty(ontologyPrefix+ PropertyTypes.resourceName);
         resourceTypeName= baseModel.getProperty(ontologyPrefix+ PropertyTypes.resourceTypeName);
+        parallelExecutionName= baseModel.getProperty(ontologyPrefix+ PropertyTypes.parallelExecutionHasName);
+        workflowName= baseModel.getProperty(ontologyPrefix+ PropertyTypes.workflowHasName);
+
+    }
+
+    private static void importParallelExecutionEntities(){
+        ResIterator iterator= retrieveIterator(parallelExecutionName);
+        Property startingOn= baseModel.getProperty(ontologyPrefix+ PropertyTypes.startingOnTask);
+        Property endingOn= baseModel.getProperty(ontologyPrefix+ PropertyTypes.endingOnTask);
+
+        while(iterator.hasNext()){
+            Resource resource= iterator.nextResource();
+            Statement statement= resource.getProperty(parallelExecutionName);
+            String startingOnTaskName= "";
+            String endingOnTaskName= "";
+            if(statement != null){
+                String name = statement.getObject().asLiteral().getString();
+                try {
+                    startingOnTaskName = resource.getProperty(startingOn).getResource().getProperty(taskName).getObject().asLiteral().getString();
+                }catch(NullPointerException e){
+                    Printer.errorPrint(Sources.Importer.name(), "problems importing the execution Entity "+ name+"\n" +
+                            "this needs the startingOnTask property, terminating");
+                    System.exit(-1);
+                }
+                try {
+                    endingOnTaskName = resource.getProperty(endingOn).getResource().getProperty(taskName).getObject().asLiteral().getString();
+                }catch(NullPointerException e){
+                    Printer.errorPrint(Sources.Importer.name(), "problems importing the execution Entity "+ name+"\n" +
+                            "this needs the endingOnTask property, terminating");
+                    System.exit(-1);
+                }
+                EntityManager.addParallelExecutionEntity(name, startingOnTaskName, endingOnTaskName);
+            }
+
+
+        }
 
     }
     private static void importResourceTypes(){
@@ -234,6 +278,7 @@ public class Importer {
         Property taskIsEndTask= baseModel.getProperty(ontologyPrefix+PropertyTypes.taskIsEndTask);
         Property taskIsStartTask= baseModel.getProperty(ontologyPrefix+PropertyTypes.taskIsStartTask);
         Property taskIsFollowedBy= baseModel.getProperty(ontologyPrefix+PropertyTypes.taskIsFollowedBy);
+        Property taskHasPredecessor= baseModel.getProperty(ontologyPrefix+PropertyTypes.taskHasPredecessor);
         Property taskNeedsResource= baseModel.getProperty(ontologyPrefix+PropertyTypes.taskNeedsResource);
         ResIterator iterator= retrieveIterator(taskName);
 
@@ -248,29 +293,59 @@ public class Importer {
             boolean endTask;
 
             List<String> taskIsFollowedByPlaceholder= new LinkedList<>();
+            List<String> taskHasPredecessors= new LinkedList<>();
 
             try {
                 priority = resource.getProperty(taskHasPriority).getObject().asLiteral().getInt();
                 timeNeeded = resource.getProperty(taskTimeNeeded).getObject().asLiteral().getInt();
-                startTask = false;
-                endTask = resource.getProperty(taskIsEndTask).getObject().asLiteral().getBoolean();
             }catch(NullPointerException e){
                 Printer.errorPrint(Sources.Importer.name(), "problems importing the Task "+ name+"\n" +
                         "make sure this Task has the must have properties\n" + Printer.printPropertyRules(ClassTypes.TASK));
                 continue;
             }
+            try {
+                endTask = resource.getProperty(taskIsEndTask).getObject().asLiteral().getBoolean();
+            }catch(NullPointerException e){
+                endTask = false;
+            }
+            try {
+                startTask = resource.getProperty(taskIsStartTask).getObject().asLiteral().getBoolean();
+            }catch(NullPointerException e){
+                startTask = false;
+            }
 
             // if no end Task, there are one or more tasks to follow
             if(!endTask){
 
-                startTask =  resource.getProperty(taskIsStartTask).getObject().asLiteral().getBoolean();
-                StmtIterator iter = resource.listProperties(taskIsFollowedBy);
+                try {
+                    StmtIterator iter = resource.listProperties(taskIsFollowedBy);
 
-                while(iter.hasNext()){
+                    while (iter.hasNext()) {
 
-                    Statement st= iter.nextStatement();
-                    taskIsFollowedByPlaceholder.add(st.getObject().asResource().getProperty(taskName).getObject().asLiteral().getString());
-                    //System.out.println(name+" is followed by "+st.getObject().asResource().getProperty(taskHasName).getObject().asLiteral().getString());
+                        Statement st = iter.nextStatement();
+                        taskIsFollowedByPlaceholder.add(st.getObject().asResource().getProperty(taskName).getObject().asLiteral().getString());
+                        //System.out.println(name+" is followed by "+st.getObject().asResource().getProperty(taskHasName).getObject().asLiteral().getString());
+                    }
+                }catch(NullPointerException e){
+                    Printer.errorPrint(Sources.Importer.name(), "problems importing the Task "+ name+"\n" +
+                            "there are no predecessor tasks linked fo a task that is not a start task");
+                    System.exit(-1);
+                }
+            }
+            if(!startTask){
+                try {
+                    StmtIterator iter = resource.listProperties(taskHasPredecessor);
+
+                    while (iter.hasNext()) {
+
+                        Statement st = iter.nextStatement();
+                        taskHasPredecessors.add(st.getObject().asResource().getProperty(taskName).getObject().asLiteral().getString());
+                        //System.out.println(name+" is followed by "+st.getObject().asResource().getProperty(taskHasName).getObject().asLiteral().getString());
+                    }
+                }catch(NullPointerException e){
+                    Printer.errorPrint(Sources.Importer.name(), "problems importing the Task "+ name+"\n" +
+                            "there are no predecessor tasks linked fo a task that is not a start task");
+                    System.exit(-1);
                 }
             }
 
@@ -299,7 +374,7 @@ public class Importer {
                                         .getString());
 
             }
-            EntityManager.addTask(name, timeNeeded, endTask, startTask, qualificationsNeeded, priority, taskIsFollowedByPlaceholder, resourcesPlaceholder);
+            EntityManager.addTask(name, timeNeeded, endTask, startTask, qualificationsNeeded, priority,taskHasPredecessors, taskIsFollowedByPlaceholder, resourcesPlaceholder);
         }
     }
 

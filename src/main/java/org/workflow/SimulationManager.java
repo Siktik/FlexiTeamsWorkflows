@@ -14,12 +14,7 @@ public class SimulationManager {
     
     public static void init(){
         eventQueue= new PriorityQueue<>(compareEvents);
-        eventQueue.addAll(EntityManager.allEvents);
-        workflow = new Workflow(EntityManager.sortedTasks.get(EntityManager.WorkflowTaskType.STARTTASK).get(0),
-                EntityManager.sortedTasks.get(EntityManager.WorkflowTaskType.ENDTASK).get(0),
-                EntityManager.sortedTasks.get(EntityManager.WorkflowTaskType.INNERTASK));
-
-
+        eventQueue.addAll(EntityManager.allEvents.values());
 
     }
 

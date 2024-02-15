@@ -18,24 +18,60 @@ public class PropertyTypes {
      * is named the exact same way!!
      */
 
+    /**
+     * names of classes
+     * if an entity does not have this property it will not be found by the importer
+     */
     static String personName= "personHasName";
     static String eventName= "eventHasName";
     static String resourceName= "resourceHasName";
     static String qualificationName= "qualificationHasName";
     static String taskName= "taskHasName";
     static String resourceTypeName = "resourceTypeHasName";
+    static String workflowHasName = "workflowHasName";
+    static String parallelExecutionHasName = "parallelExecutionHasName";
+
+    /**
+     * event related
+     */
     static String eventPriority= "eventPriority";
-    static String taskPriority= "taskPriority";
     static String eventHasStartTime= "eventHasStartTime";
+
+    /**
+     * person related
+     */
+    static String personHasQualification = "personHasQualification";
+    /**
+     * task related
+     */
     static String taskHasTimeNeeded= "taskHasTimeNeeded";
     static String taskIsEndTask= "taskIsEndTask";
     static String taskIsStartTask= "taskIsStartTask";
-    static String personHasQualification = "personHasQualification";
     static String taskNeedsQualification= "taskNeedsQualification";
     static String taskNeedsResource = "taskNeedsResource";
     static String taskIsFollowedBy= "taskIsFollowedBy";
+    static String taskPriority= "taskPriority";
+    static String taskHasPredecessor = "taskHasPredecessor";
+
+    /**
+     * resource Type related
+     */
     static String isOfResourceType= "isOfResourceType";
     static String unlimitedResource= "unlimited";
+    /**
+     * workflow related
+     */
+    static String isStartOfWorkflow= "startTaskIs";
+    static String isEndOfWorkflow= "endTaskIs";
+    static String hasParallelExecution = "hasParallelExecution";
+    static String innerTaskIs= "innerTaskIs";
+
+    /**
+     * parallel Execution related
+     */
+
+    static String endingOnTask= "endingOnTask";
+    static String startingOnTask= "startingOnTask";
 
 
 

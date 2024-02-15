@@ -33,12 +33,7 @@ public class Workflow {
 
     private static int idCounter = 0 ;
 
-    public Workflow(Task startTask){
-        this.id= idCounter++;
-        queuedEvents = new PriorityQueue<>(comparingEvents);
-        this.startTask= startTask;
-        System.out.println(this);
-    }
+
 
     public Workflow(Task startTask, Task endTask, List<Task> innerTasks){
         this.id= idCounter++;

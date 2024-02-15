@@ -7,5 +7,6 @@ public enum ClassTypes {
     QUALIFICATION,
     EVENT,
     TASK,
-    PERSON
+    PERSON,
+    PARALLELEXECUTIONENTITIES
 }

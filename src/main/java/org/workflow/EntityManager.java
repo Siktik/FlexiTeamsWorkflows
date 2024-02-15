@@ -16,67 +16,85 @@ public class EntityManager {
     /**
      * all events imported from ontology
      */
-    public static List<Event> allEvents;
+    public static Hashtable<String,Event> allEvents;
     /**
      * all Persons imported from ontology
      */
-    public static List<Person> allPersons;
+    public static Hashtable<String,Person> allPersons;
 
     /**
      * all Tasks imported from ontology
      */
-    public static List<Task> allTasks;
+    public static Hashtable<String, Task> allTasks;
     /**
      * all Qualifications imported from ontology
      */
-    public static List<Qualifikation> allQualifications;
+    public static Hashtable<String,Qualifikation> allQualifications;
 
-    /**
-     * following the idea that at some point there may be multiple workflows using similar persons and resources
-     * not yet implemented, there is only on workflow and currently that one is linear with one start and one end task
-     */
-    public static List<Workflow> allWorkflows;
+    public static Hashtable<String, ParallelExecution> allParallelExecutionEntities;
+
+
 
     /**
      * sorted tasks according to start-, end-, inner Task
      */
-    public static Map<WorkflowTaskType, List<Task>> sortedTasks;
 
     // key: resourceType
-    public static Map<String, List<Resource>> allResources;
-    public static Map<String, ResourceType> allResourceTypes;
+    public static Hashtable<String, List<Resource>> allResources;
+    public static Hashtable<String, ResourceType> allResourceTypes;
 
-    public enum WorkflowTaskType{
-        STARTTASK,
-        INNERTASK,
-        ENDTASK
-    }
+
 
     public static void init(){
-        allEvents= new LinkedList<>();
-        allPersons= new LinkedList<>();
-        allResources= new HashMap<>();
-        allResourceTypes= new HashMap<>();
-        allTasks= new LinkedList<>();
-        allQualifications= new LinkedList<>();
+        allEvents= new Hashtable<>();
+        allPersons= new Hashtable<>();
+        allResources= new Hashtable<>();
+        allResourceTypes= new Hashtable<>();
+        allTasks= new Hashtable<>();
+        allQualifications= new Hashtable<>();
+        allParallelExecutionEntities= new Hashtable<>();
 
-        allWorkflows= new LinkedList<>();
-        sortedTasks= new HashMap<>(){
-            {
-             put(WorkflowTaskType.STARTTASK, new LinkedList<>());
-             put(WorkflowTaskType.INNERTASK, new LinkedList<>());
-             put(WorkflowTaskType.ENDTASK, new LinkedList<>());
+
+
+    }
+    public static void addParallelExecutionEntity(String name, String startingOnTaskName, String endingOnTaskName){
+
+        if(!allParallelExecutionEntities.containsKey(name)){
+            Task startingOnTask =allTasks.get(startingOnTaskName);
+            if(startingOnTask == null){
+                Printer.errorPrint(Sources.EntityManager.name(), "There is no Task with the name "+ startingOnTaskName+" when importing a " +
+                        "ParallelExecution Entity that needs this task\n Terminating");
+                System.exit(-1);
             }
-        };
+            Task endingOnTask =allTasks.get(endingOnTaskName);
+            if(endingOnTask == null){
+                Printer.errorPrint(Sources.EntityManager.name(), "There is no Task with the name "+ endingOnTaskName+" when importing a " +
+                        "ParallelExecution Entity that needs this task\n Terminating");
+                System.exit(-1);
+            }
+            allParallelExecutionEntities.put(name, new ParallelExecution(name, endingOnTask, startingOnTask));
+        }
 
     }
 
     public static void addEvent(String name, int priority, int startTime){
-        allEvents.add(new Event(name, priority, startTime));
+        if(!allEvents.containsKey(name)){
+            allEvents.put(name,new Event(name, priority, startTime));
+        }else{
+            System.err.println("Did not instantiate a second Event with the name :"+ name+" \n" +
+                    "names have to be unique!!!!\n##################\n#################\n#################\n#################");
+        }
+
     }
 
     public static void addPerson(String name, List<String> qualifications){
-        allPersons.add(new Person(name, qualifications));
+
+        if(!allPersons.containsKey(name)){
+            allPersons.put(name,new Person(name, qualifications));
+        }else{
+            System.err.println("Did not instantiate a second Person with the name :"+ name+" \n" +
+                    "names have to be unique!!!!\n##################\n#################\n#################\n#################");
+        }
     }
     public static void addResource(String name, String type){
         if(!allResources.containsKey(type)){
@@ -89,7 +107,13 @@ public class EntityManager {
     }
 
     public static void addQualification(String name){
-        allQualifications.add(new Qualifikation(name));
+        if(!allQualifications.containsKey(name)) {
+            allQualifications.put(name, new Qualifikation(name));
+
+        }else{
+            System.err.println("Did not instantiate a second Qualification with the name :"+ name+" \n" +
+                    "names have to be unique!!!!\n##################\n#################\n#################\n#################");
+        }
     }
     public static void addResourceType(String name, boolean unlimitedResource) throws IllegalStateException{
 
@@ -104,19 +128,21 @@ public class EntityManager {
 
 
     public static void addTask(String name, int timeNeeded, boolean isEndTask, boolean isStartTask
-            , List<String> neededQualifications, int priority, List<String> followedByPlaceholder, List<String> resourcesPlaceholder){
+            , List<String> neededQualifications, int priority, List<String> taskHasPredecessors, List<String> followedByPlaceholder, List<String> resourcesPlaceholder){
 
-
-        Task t= new Task(name,
-                timeNeeded,
-                isEndTask,
-                isStartTask,
-                neededQualifications,
-                priority,
-                followedByPlaceholder,
-                resourcesPlaceholder
-        );
-        allTasks.add(t);
+        if(!allTasks.containsKey(name)){
+            Task t= new Task(name,
+                    timeNeeded,
+                    isEndTask,
+                    isStartTask,
+                    neededQualifications,
+                    priority,
+                    taskHasPredecessors,
+                    followedByPlaceholder,
+                    resourcesPlaceholder
+            );
+            allTasks.put(name, t);
+        }
     }
 
     /**
@@ -126,12 +152,21 @@ public class EntityManager {
      * this is done to allow for easy reference, else we would have to search for certain tasks everytime
      */
     public static void findEntitiesForPlaceholders(){
-        System.out.println("\n------------SET UP TASKS FOLLOWED BY------------\n");
 
-        for(Task task: allTasks){
+        for(Task task: allTasks.values()){
 
             if(!task.isEndTask()){
-               setUpFollowerTask(task);
+               task.setFollowingTasks(
+                       setUpFollowerOrPredecessorTask(
+                               task.getFollowingTaskPlaceholder()
+               ));
+            }
+            if(!task.isStartTask()){
+                task.setPredecessorTasks(
+                        setUpFollowerOrPredecessorTask(
+                                task.getPredecessorTaskPlaceHolder()
+                        )
+                );
             }
 
             if(!task.getQualificationsNeededPlaceHolder().isEmpty()){
@@ -139,41 +174,32 @@ public class EntityManager {
             }
 
         }
-        sortTasksAndFindWorkflows();
+
 
     }
-    private static void setUpFollowerTask(Task task){
-        //Printer.print(Sources.EntityManager.name(), "setting up following task Links for Task with name "+ task.getName());
 
-        List<Task> followingTasks= new LinkedList<>();
-        for(String taskName: task.getFollowingTaskPlaceholder()){
-            for(Task t2: allTasks){
-                if(t2.getName().equals(taskName)){
-                    followingTasks.add(t2);
-                }
+    private static List<Task> setUpFollowerOrPredecessorTask(List<String> placeHolders){
+
+        List<Task> followingOrPredecessorTasks= new LinkedList<>();
+        for(String taskName: placeHolders){
+            Task existent= allTasks.get(taskName);
+            if(existent == null){
+                Printer.errorPrint(Sources.EntityManager.name(), "Well that's weird, as following property directly links to a task, this error can only occur if the task" +
+                        "that is linked was not imported correctly, the name may be "+ taskName);
+                System.exit(-1);
             }
+            followingOrPredecessorTasks.add(existent);
+
         }
-        task.setFollowingTasks(followingTasks);
-        /*
-        StringBuilder builder= new StringBuilder();
+       return followingOrPredecessorTasks;
 
-        task.getFollowingTaskPlaceholder().forEach(builder::append);
-        Printer.print(Sources.EntityManager.name(),"Have set following tasks to a number of "+ task.getFollowingTasks().size() +" ||| String names were: "+ builder);
-        System.out.println();
-        builder.delete(0, builder.length());
-        task.getFollowingTasks().forEach(e-> builder.append(e.getName()).append("||"));
-        Printer.print(Sources.EntityManager.name(), "Found tasks with names: "+ builder);
-
-        System.out.println();
-
-         */
     }
 
     private static void setUpQualifications(Task task){
         List<String> strings= task.getQualificationsNeededPlaceHolder();
         Qualifikation [] qualificationNeeded = new Qualifikation[strings.size()];
         for(int i = 0 ; i < strings.size(); i++){
-            for(Qualifikation q: allQualifications){
+            for(Qualifikation q: allQualifications.values()){
                 if(q.getName().equals(strings.get(i))){
                     qualificationNeeded[i] = q;
                     break;
@@ -181,83 +207,15 @@ public class EntityManager {
             }
         }
         task.setQualificationsNeeded(List.of(qualificationNeeded));
-        /*
-        StringBuilder builder= new StringBuilder();
-
-        task.getQualificationsNeeded().forEach(builder::append);
-        Printer.print(Sources.EntityManager.name(),"Have set following resources to a number of "+ task.getQualificationsNeededPlaceHolder().size() +" ||| String names were: "+ builder);
-        System.out.println();
-        builder.delete(0, builder.length());
-        task.getQualificationsNeeded().forEach(e-> builder.append(e.getName()).append("||"));
-        Printer.print(Sources.EntityManager.name(), "Found resources with names: "+ builder);
-
-        System.out.println();
-
-         */
 
     }
 
 
 
 
-    /**
-     * sorting the tasks may help building the workflows
-     * this is yet not implemented
-     */
-    private static void sortTasksAndFindWorkflows(){
-        allTasks.forEach(task->{
-            if(task.isStartTask())
-                addToSortedTasks(WorkflowTaskType.STARTTASK, task);
-            else if(task.isEndTask())
-                addToSortedTasks(WorkflowTaskType.ENDTASK, task);
-            else
-                addToSortedTasks(WorkflowTaskType.INNERTASK, task);
-        });
-
-        /*
-        List<Task> startTasks= sortedTasks.get(WorkflowTaskType.STARTTASK);
-        if (startTasks.isEmpty()){
-            System.out.println("No start task found, terminating...");
-            System.exit(0);
-        }
-        if(startTasks.size()>1)
-            System.out.println("found more than one startTask, this is currently not possible, only the first starttask will be considered, its workflow built and used in Sim");
-
-        Task startTask= startTasks.get(0);
-        Workflow workflow = new Workflow(startTasks.get(0));
-        if(startTask.getFollowingTasks().isEmpty()){
-            System.out.println("No following task for startTask with name "+ startTask.getName());
-            System.out.println("Terminating.....");
-            System.exit(0);
-        }
-        List<>
-        for(Task t: startTask.getFollowingTasks()){
-
-            if(t.isEndTask()){
-                if(workflow.getEndTask() == null)
-                    workflow.setEndTask(t);
-                else {
-                    System.out.println("Workflow with id " + workflow.getId() + " already has an end Task\n" +
-                            "currently not able to handle this, therefore terminating....");
-                    System.exit(0);
-                }
-            }else{
-                workflow.addInnerTask(t);
-            }
-
-        }
-        */
 
 
 
-    }
-
-
-    private static void addToSortedTasks(WorkflowTaskType workflowTaskType, Task t){
-        List<Task> requestedList= sortedTasks.get(workflowTaskType);
-        requestedList.add(t);
-        sortedTasks.put(workflowTaskType, requestedList);
-    }
 
 
 

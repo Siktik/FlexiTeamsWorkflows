@@ -57,6 +57,9 @@ public class Task {
      * here the tasks corresponding to the placeholders are linked in
      */
     private List<Task> followingTasks; // can only be set when all Tasks have been instantiated
+
+    private List<String> predecessorTaskPlaceHolder;
+    private List<Task> predecessorTasks;
     /**
      * this contains the names of the resourceTypes that are needed to execute this task
      */
@@ -78,18 +81,20 @@ public class Task {
 
 
     public Task(String name, int timeNeeded, boolean isEndTask, boolean isStartTask,
-                List<String> qualificationsNeeded, int priority, List<String> followingTaskPlaceholder,
+                List<String> qualificationsNeeded, int priority,List<String> taskHasPredecessors, List<String> followingTaskPlaceholder,
                 List<String> resourcesPlaceholder){
         this.id= idCounter++;
         this.qualificationsNeededPlaceHolder = qualificationsNeeded;
         this.followingTaskPlaceholder= followingTaskPlaceholder;
         this.followingTasks= new LinkedList<>();
+        this.predecessorTasks= new LinkedList<>();
         this.name=name;
         this.timeNeeded= timeNeeded;
         this.isEndTask= isEndTask;
         this.isStartTask=isStartTask;
         this.priority=priority;
         this.resourcesPlaceholder= resourcesPlaceholder;
+        this.predecessorTaskPlaceHolder= taskHasPredecessors;
         //System.out.println(this);
     }
     public int start;
@@ -123,7 +128,6 @@ public class Task {
     }
 
 
-
     @Override
     public String toString() {
         return "Task{" +
@@ -131,12 +135,18 @@ public class Task {
                 ", name='" + name + '\'' +
                 ", timeNeeded=" + timeNeeded +
                 ", priority=" + priority +
-                ", qualificationsNeeded=" + qualificationsNeededPlaceHolder +
+                ", qualificationsNeededPlaceHolder=" + qualificationsNeededPlaceHolder +
                 ", isStartTask=" + isStartTask +
                 ", isEndTask=" + isEndTask +
                 ", followingTaskPlaceholder=" + followingTaskPlaceholder +
-                ", followingTasks=" + followingTasks.stream().map(e-> e.getName()+",").toList() +
+                ", followingTasks=" + followingTasks.stream().map(Task::getName).toList() +
+                ", predecessorTaskPlaceHolder=" + predecessorTaskPlaceHolder +
+                ", predecessorTasks=" + predecessorTasks.stream().map(Task::getName).toList() +
                 ", resourcesPlaceholder=" + resourcesPlaceholder +
+                ", qualificationsNeeded=" + qualificationsNeeded +
+                ", allResourcesAssigned=" + allResourcesAssigned +
+                ", allQualificationsAssigned=" + allQualificationsAssigned +
+                ", start=" + start +
                 '}';
     }
 }

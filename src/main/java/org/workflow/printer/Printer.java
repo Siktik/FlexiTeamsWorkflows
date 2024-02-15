@@ -105,11 +105,11 @@ public class Printer {
         switch (type){
             case TASK -> {
                 System.out.println("\nAll Tasks:\n");
-                EntityManager.allTasks.forEach(System.out::println);
+                EntityManager.allTasks.values().forEach(System.out::println);
             }
             case EVENT -> {
                 System.out.println("\nAll Events:\n");
-                EntityManager.allEvents.forEach(System.out::println);
+                EntityManager.allEvents.values().forEach(System.out::println);
             }case RESOURCETYPE -> {
                 System.out.println("\nAll ResourceTypes:\n");
                 EntityManager.allResourceTypes.values().forEach(System.out::println);
@@ -120,10 +120,14 @@ public class Printer {
                         + "\n"+ e.get(0).toString()));
             }case QUALIFICATION -> {
                 System.out.println("\nAll Qualification:\n");
-                EntityManager.allQualifications.forEach(System.out::println);
+                EntityManager.allQualifications.values().forEach(System.out::println);
             }case PERSON -> {
                 System.out.println("\nAll Person:\n");
-                EntityManager.allPersons.forEach(System.out::println);
+                EntityManager.allPersons.values().forEach(System.out::println);
+            }
+            case PARALLELEXECUTIONENTITIES -> {
+                System.out.println("\nAll ParallelExecutionEntities:\n");
+                EntityManager.allParallelExecutionEntities.values().forEach(System.out::println);
             }
         }
     }
