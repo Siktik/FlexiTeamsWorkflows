@@ -2,11 +2,15 @@ package org.workflow.Classes;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.workflow.EntityManager;
 import org.workflow.TimeManager;
 import org.workflow.printer.Printer;
 import org.workflow.printer.Sources;
 
+import javax.xml.transform.Source;
 import java.util.*;
+import java.util.concurrent.PriorityBlockingQueue;
+import java.util.stream.Collectors;
 
 @Getter
 
@@ -19,37 +23,38 @@ public class Workflow {
     @Setter
     private Task endTask;
     @Setter
-    private List<Task> innerTasks;
     private int id;
-    private Map<String, Task> quickAccess;
+    @Getter
+    public boolean working;
+
+    private String name;
 
     /**
      * this saves every task that is currently beeing executed
      * by checking if the thread of a runTaskConcept is interrupted we find tasks that finished their execution
      * currently only one instance of a task can be executed at a time
      */
-    private Map<String, TaskRunConcept> tasksThatAreCurrentlyBeingWorkedOn;
+    private Map<String, TaskRunConcept> runningTasks;
+    private HashSet<String> freeTasks;
 
+    private Map<String, PriorityQueue<TaskRunConcept>> waitingTasks;
 
     private static int idCounter = 0 ;
+    private Thread workflowMainThread;
 
-    private List<ParallelExecution> parallelExecutions;
-
-    public Workflow(String name, Task startTask, Task endTask, List<ParallelExecution> parallelExecutions){
+    public Workflow(String name, Task startTask, Task endTask){
         this.id= idCounter++;
-        queuedEvents = new PriorityQueue<>(comparingEvents);
-        needsFurtherExecution= new PriorityQueue<>(comparingEvents);
-        quickAccess = new HashMap<>();
-        quickAccess.put(startTask.getName(), startTask);
-        quickAccess.put(endTask.getName(), endTask);
-        //innerTasks.forEach(e-> quickAccess.put(e.getName(), e));
+        queuedEvents = new PriorityBlockingQueue<Event>(1,comparingEvents);
+        this.name=name;
         this.startTask= startTask;
         this.endTask= endTask;
-        //this.innerTasks= innerTasks;
-        this.parallelExecutions= parallelExecutions;
-        tasksThatAreCurrentlyBeingWorkedOn= new Hashtable<>();
-        Thread eventListener= new Thread(this::runWorkflow);
-        eventListener.start();
+        runningTasks = new Hashtable<>();
+        waitingTasks = new Hashtable<>();
+        workflowMainThread= new Thread(this::runWorkflow);
+    }
+
+    public void startWorkflow(){
+        workflowMainThread.start();
     }
 
     @Override
@@ -57,162 +62,153 @@ public class Workflow {
         return "Workflow{" +
                 "startTask=" + startTask.getName() +
                 ", endTask=" + endTask.getName() +
-                ", parallelExecutions=" + parallelExecutions +
                 '}';
     }
 
-    public void addInnerTask(Task t){
-        innerTasks.add(t);
-    }
 
-    @Getter
-    public boolean working;
+
 
     public void addEventToQueue(Event e){
         queuedEvents.add(e);
     }
 
-
-    private PriorityQueue<Event> needsFurtherExecution;
     int outPutLimiterTaskWaiting= TimeManager.getSimTime();
     int outPutLimiterEventWaiting= TimeManager.getSimTime();
-
     /**
      * the main of a Workflow, don't change the order of the method calls unless you know what the effect would be
      */
     private void runWorkflow(){
         working = true;
+        initTasksMap();
+        System.out.println("\n##################################################\n" +
+                "##################################################\n" +
+                "############## STARTING SIMULATION ###############\n" +
+                "############## AT SIM_TIME: "+TimeManager.getSimTime()+"      ###############\n"+
+                        "##################################################\n" +
+                        "##################################################\n"
+                );
+
 
         while(working) {
-
-
-                // don't change order
-                checkTaskProgression();
-
-                checkTasksWaitingForFurtherExecution();
-                checkIncomingEvents();
-
-
-                if (TimeManager.getSimTime() > 180)
-                    working = false;
+            planExecution();
+            startExecution();
         }
         Thread.currentThread().interrupt();
 
 
     }
 
-    /**
-     * every task that is currently running is saved with the thread who is running the task and the event that lead to execution of the task
-     * within the Map tasksThatAreCurrentlyBeingWorkedOn
-     * if a task end it terminates its thread and this method will find the task then as it checks for threads that have been interrupted
-     * we save the TaskRunConcept to a list which will remove this and other taskRunConcepts that may be finished from the map after we've done iterating over it
-     * we check for the finished task if it is a endTask, then we just print it, else we add it to a List that will
-     * checked after this method to calculate the event that will take place in the next task
-     * by this it is possible to choose between two or more events that are waiting for the same task to be executed with regards to priority or time in Sim
-     */
-    private void checkTaskProgression(){
-        if(!tasksThatAreCurrentlyBeingWorkedOn.isEmpty()) {
-            List<String> toRemove= new LinkedList<>();
-            Iterator<String> iterator = tasksThatAreCurrentlyBeingWorkedOn.keySet().iterator();
 
-            while (iterator.hasNext()) {
+    private void planExecution(){
+        /**
+         * update Priorities of waiting events possibly here
+         */
 
-                String key = iterator.next();
-                TaskRunConcept taskRunConcept = tasksThatAreCurrentlyBeingWorkedOn.get(key);
-                if (taskRunConcept.t.isInterrupted()) {
-                    toRemove.add(key);
-                    Task task = taskRunConcept.task;
-                    if (task.isEndTask()) {
-                        Printer.print(Sources.Workflow.name(), "Finished a workflow for Event " + taskRunConcept.e.getName() );
-                    } else {
+        /**
+         * check finished events
+         */
 
-                        Event e= taskRunConcept.e;
-                        e.nextTask= task.getFollowingTasks().get(0).getName();
-                        // conditional task
-                        needsFurtherExecution.add(taskRunConcept.e);
-                        Printer.print(Sources.Workflow.name(), taskRunConcept.e.getName()+"finished task " + task.getName() );
+        List<String> endedTasks = runningTasks.entrySet().stream().filter(stringTaskRunConceptEntry -> {
+            return  stringTaskRunConceptEntry.getValue().t.isInterrupted();
+        }).map(Map.Entry::getKey).toList();
+        if(!endedTasks.isEmpty())
+        System.out.println("\n##################################################\n" +
+                "\tChecking and Planning FINISHED TASKS\n"+
+                "\ttime: "+ TimeManager.getSimTime());
+        for(String taskName: endedTasks){
 
-                    }
-                }
-
+            /**
+             *  -   all tasks considered here have been finished
+             *  -   therefore add the information that the event has eben processed on this task
+             *  -   make task free in runningTasksMap by replacing finished TaskRunConcept with null
+             *  **less computing needed if names of free tasks here are saved in another hashmap**
+             *
+             */
+            TaskRunConcept trc= runningTasks.get(taskName);
+            Event e= trc.event;
+            Task task= trc.getTask();
+            task.currentEvent= null;
+            task.addProcessedEvent(trc.event);
+            runningTasks.remove(taskName);
+            freeTasks.add(taskName);
+            Printer.print(e.getName(), "Ended "+ taskName);
+            /**
+             * -    check all following tasks, initiate a TaskRunConcept for every task whose predecessors all match
+             *      the condition that they have finished processing the event
+             * -    add TaskRunConcepts to waiting Tasks Map
+             */
+            if(task.getFollowingTasks().isEmpty()){
+                Printer.print(e.getName(), "No followers for "+ taskName+" execution ends here");
+                continue;
             }
-            if(!toRemove.isEmpty()){
-                toRemove.forEach(e-> tasksThatAreCurrentlyBeingWorkedOn.remove(e));
-            }
+            for(Task follower: task.getFollowingTasks()){
+                List<Task> predecessors= follower.getPredecessorTasks();
+                if(predecessors.stream().allMatch(t-> t.hasProcessedEvent(e.getName()))){
+                    TaskRunConcept nextTRC= new TaskRunConcept(e,follower.getName());
+                    waitingTasks.get(follower.getName()).add(nextTRC);
+                    printed= false;
+                    Printer.print(e.getName(), "Planned TRC on "+ follower.getName()+" event was processed by all predecessors");
+                }else{
+                    List<String> causes= predecessors.stream().filter(t-> !t.hasProcessedEvent(e.getName())).map(Task::getName).toList();
+                    Printer.print(e.getName(), "Couldn't plan "+ taskName+" as predecessors\n" +
+                            Arrays.toString(causes.toArray()) +" haven't processed the event");
 
-        }
-    }
-
-    /**
-     * this checks the list of Events that are waiting for further execution
-     * if an event gets scheduled to this workflow and the start task is already running with another event, the event gets added to this list
-     * also events that just finished their execution on a task get added to this list
-     * currently the list is sorted by a comparator such that events with a high priority will be looked at first
-     * if the task that this event should be executed on is free, a TaskRunConcept is built, added to the Map and the Thread running the task is started
-     *
-     * by now this means that if there are two events waiting for the same task and one Event is in there way longer, cause it may have failed future executions on the task
-     * the event with the higher priority will be chosen first
-     */
-    private void checkTasksWaitingForFurtherExecution(){
-        if(!needsFurtherExecution.isEmpty()){
-            List<Event> toRemove= new LinkedList<>();
-            for (Event e: needsFurtherExecution){
-                if(!tasksThatAreCurrentlyBeingWorkedOn.containsKey(e.nextTask)){
-
-                    toRemove.add(e);
-                    Task nextTask= quickAccess.get(e.nextTask);
-                    Printer.print(Sources.Workflow.name(), e.getName()+" continuing work with task "+ nextTask.getName());
-                    TaskRunConcept nextTaskRunConcept = new TaskRunConcept(e, nextTask);
-                    tasksThatAreCurrentlyBeingWorkedOn.put(nextTask.getName(), nextTaskRunConcept);
-                    nextTaskRunConcept.start();
                 }
             }
-            needsFurtherExecution.removeAll(toRemove);
+
+        }
+
+        /**
+         * -    init TaskRunConcept for every Event that is new to the workflow
+         */
+        if(!queuedEvents.isEmpty())
+        System.out.println("\n##################################################\n" +
+                "\tChecking and Planning NEW EVENTS\n"+
+                "\ttime: "+ TimeManager.getSimTime());
+        while(!queuedEvents.isEmpty()){
+            Event e= queuedEvents.poll();
+            TaskRunConcept t= new TaskRunConcept(e, e.startTask);
+            waitingTasks.get(e.startTask).add(t);
+            printed= false;
+            Printer.print(e.getName(), "Planned start on "+ e.startTask);
+        }
+
+
+    }
+
+    private boolean printed= false;
+    private void startExecution(){
+        if(waitingTasks.values().stream().anyMatch(queue-> !queue.isEmpty())&&!printed) {
+            System.out.println("\n##################################################\n" +
+                    "\tSTARTING EXECUTIONS\n" + "\ttime: " + TimeManager.getSimTime());
+            printed= true;
+        }
+        Set<String> taskNames= waitingTasks.keySet();
+        for(String taskName: taskNames){
+            if(freeTasks.contains(taskName) && !waitingTasks.get(taskName).isEmpty()){
+                TaskRunConcept trc= waitingTasks.get(taskName).poll();
+                freeTasks.remove(taskName);
+                runningTasks.put(taskName, trc);
+                trc.start();
+            }
         }
     }
 
-    /**
-     * new Events are scheduled by the SImulation Manager towars this Workflow
-     * currently there is only one Workflow, in future the Sim manager may schedule Events according to the workflows they should be worked on
-     *
-     * if an event has eben scheduled, the method checks if the startTask for this event is free
-     * if free, the taskRunConcept is instantiated and runned
-     * if not free, the event is added to the
-     *
-     */
-    private void checkIncomingEvents(){
-        if (!queuedEvents.isEmpty()) {
-            Event e = queuedEvents.poll();
-            if (!tasksThatAreCurrentlyBeingWorkedOn.containsKey(startTask.getName())) {
-                Printer.print(Sources.Workflow.name(), e.getName()+ "Found event and start Task free");
 
-                TaskRunConcept starterTaskRunConcept = new TaskRunConcept(e, startTask);
-                tasksThatAreCurrentlyBeingWorkedOn.put(startTask.getName(), starterTaskRunConcept);
-                starterTaskRunConcept.start();
 
-            } else {
-                Printer.print(Sources.Workflow.name(), "Start task is not free for new Event, adding to needsFurtherExecutionList");
-                needsFurtherExecution.add(e);
-            }
 
-        } else {
-            if (TimeManager.getSimTime() - outPutLimiterEventWaiting > 5) {
-                System.out.println("waiting on Events to come");
-                outPutLimiterEventWaiting = TimeManager.getSimTime();
-            }
+    public void initTasksMap(){
+        Set<String> taskNames= EntityManager.allTasks.keySet();
+        runningTasks= new Hashtable<>();
+        waitingTasks= new Hashtable<>();
+        freeTasks= new HashSet<>();
+        for(String key: taskNames){
+            waitingTasks.put(key, new PriorityQueue<TaskRunConcept>(comparingTRC));
+            freeTasks.add(key);
         }
     }
 
-    private void checkResourcesFeasible(Task task){
-
-
-
-    }
-    private void assignResourcesToTask(Task task, List<Resource> resources){
-
-    }
-
-    private PriorityQueue<Event> queuedEvents;
+    private PriorityBlockingQueue<Event> queuedEvents;
 
     private Comparator<Event> comparingEvents= new Comparator<Event>() {
         @Override
@@ -225,29 +221,23 @@ public class Workflow {
 
         }
     };
+    private Comparator<TaskRunConcept> comparingTRC= new Comparator<TaskRunConcept>() {
+        @Override
+        public int compare(TaskRunConcept o1, TaskRunConcept o2) {
+            if(o1.event.getPriority()> o2.event.getPriority())
+                return -1;
+            if(o2.event.getPriority()> o1.event.getPriority())
+                return 1;
+            return 0;
+
+        }
+    };
 
 
     /**
      * a helper class to map currently running tasks, the thread that is executing this task and the event that is currently
      * at this task in one object
      */
-    private static class TaskRunConcept{
 
-        public Event e;
-        public Thread t;
-        public Task task;
-
-        TaskRunConcept(Event e, Task task){
-            this.e=e;
-            this.task=task;
-        }
-
-        public void start(){
-            t= new Thread(task::runSelf);
-            t.start();
-        }
-
-
-    }
 
 }

@@ -66,12 +66,7 @@ public class PropertyTypes {
     static String hasParallelExecution = "hasParallelExecution";
     static String innerTaskIs= "innerTaskIs";
 
-    /**
-     * parallel Execution related
-     */
 
-    static String endingOnTask= "endingOnTask";
-    static String startingOnTask= "startingOnTask";
 
 
 

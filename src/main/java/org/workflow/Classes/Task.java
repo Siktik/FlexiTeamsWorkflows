@@ -6,8 +6,10 @@ import org.workflow.TimeManager;
 import org.workflow.printer.Printer;
 import org.workflow.printer.Sources;
 
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -65,6 +67,7 @@ public class Task {
      */
     private List<String> resourcesPlaceholder;
 
+    private Map<String, Event> hasProcessed;
 
 
     private List<Qualifikation> qualificationsNeeded;
@@ -95,10 +98,13 @@ public class Task {
         this.priority=priority;
         this.resourcesPlaceholder= resourcesPlaceholder;
         this.predecessorTaskPlaceHolder= taskHasPredecessors;
+        this.hasProcessed= new Hashtable<>();
         //System.out.println(this);
     }
     public int start;
 
+
+    public Event currentEvent;
     /**
      * in this method a task executes itself, currently the execution starts when the workflow class
      * to which this task belongs calls this method
@@ -111,7 +117,7 @@ public class Task {
     public synchronized void runSelf(){
         start= TimeManager.getSimTime();
         int lastOutput = start;
-        Printer.print(Sources.Task.name()+name, "starting Task now needs "+ timeNeeded +" seconds starting at simTime "+ start);
+        Printer.print(currentEvent.getName(), "starting "+ name+" needs: "+ timeNeeded +" seconds");
 
 
         while(TimeManager.getSimTime()- start < timeNeeded){
@@ -125,6 +131,13 @@ public class Task {
         Thread.currentThread().interrupt();
 
 
+    }
+    public void addProcessedEvent(Event e){
+        hasProcessed.put(e.getName(), e);
+    }
+
+    public boolean hasProcessedEvent(String eventName){
+        return hasProcessed.containsKey(eventName);
     }
 
 

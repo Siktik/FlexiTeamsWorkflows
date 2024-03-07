@@ -31,7 +31,6 @@ public class EntityManager {
      */
     public static Hashtable<String,Qualifikation> allQualifications;
 
-    public static Hashtable<String, ParallelExecution> allParallelExecutionEntities;
 
 
 
@@ -48,6 +47,12 @@ public class EntityManager {
      */
     public static Hashtable<String, Workflow> allWorkflows;
 
+    /**
+     * while there is currently only one workflow possible for easy ref as its starttask is set for every event as every event takes place in this worrkflow
+     * as only one workflow is implemented
+     */
+    public static Workflow workflow;
+
 
 
 
@@ -58,14 +63,13 @@ public class EntityManager {
         allResourceTypes= new Hashtable<>();
         allTasks= new Hashtable<>();
         allQualifications= new Hashtable<>();
-        allParallelExecutionEntities= new Hashtable<>();
         allWorkflows= new Hashtable<>();
 
 
 
     }
-    public static void addWorkflow(String name, String startTask, String endTask, List<String> parallelExecutionEntities){
-        if(!allWorkflows.containsKey(name)){
+    public static void addWorkflow(String name, String startTask, String endTask){
+        /*if(!allWorkflows.containsKey(name)){
             List<ParallelExecution> parallelExecutions= parallelExecutionEntities.stream().map(e-> allParallelExecutionEntities.get(e)).toList();
             List<Task> innerTasks= new LinkedList<>();
             Task startingOnTask =allTasks.get(startTask);
@@ -87,33 +91,25 @@ public class EntityManager {
             System.err.println("Did not instantiate a second Workflow with the name :"+ name+" \n" +
                     "names have to be unique!!!!\n##################\n#################\n#################\n#################");
         }
-    }
 
-
-
-    public static void addParallelExecutionEntity(String name, String startingOnTaskName, String endingOnTaskName){
-
-        if(!allParallelExecutionEntities.containsKey(name)){
-            Task startingOnTask =allTasks.get(startingOnTaskName);
-            if(startingOnTask == null){
-                Printer.errorPrint(Sources.EntityManager.name(), "There is no Task with the name "+ startingOnTaskName+" when importing a " +
-                        "ParallelExecution Entity that needs this task\n Terminating");
-                System.exit(-1);
-            }
-            Task endingOnTask =allTasks.get(endingOnTaskName);
-            if(endingOnTask == null){
-                Printer.errorPrint(Sources.EntityManager.name(), "There is no Task with the name "+ endingOnTaskName+" when importing a " +
-                        "ParallelExecution Entity that needs this task\n Terminating");
-                System.exit(-1);
-            }
-            allParallelExecutionEntities.put(name, new ParallelExecution(name, endingOnTask, startingOnTask));
+         */
+        if(allWorkflows.isEmpty()){
+            Workflow workflow= new Workflow(name, allTasks.get(startTask), allTasks.get(endTask));
+            allWorkflows.put(name, workflow);
+            EntityManager.workflow= workflow;
+            SimulationManager.workflow= workflow;
+        }else{
+            Printer.errorPrint(Sources.EntityManager.name(), "Only one worflow is tested and implemented for use, this ontology contains more than one Workflow");
         }
-
     }
+
+
+
+
 
     public static void addEvent(String name, int priority, int startTime){
         if(!allEvents.containsKey(name)){
-            allEvents.put(name,new Event(name, priority, startTime));
+            allEvents.put(name,new Event(name, priority, startTime, workflow.getStartTask().getName()));
         }else{
             System.err.println("Did not instantiate a second Event with the name :"+ name+" \n" +
                     "names have to be unique!!!!\n##################\n#################\n#################\n#################");

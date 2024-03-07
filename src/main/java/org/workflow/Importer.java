@@ -64,10 +64,9 @@ public class Importer {
         importPersons();
         importResourceTypes();
         importResources();
-        importEvents();
         importTasks();
-        importParallelExecutionEntities();
         importWorkflow();
+        importEvents();
 
         EntityManager.findEntitiesForPlaceholders();
 
@@ -77,8 +76,7 @@ public class Importer {
                 "\nPersons: "+ EntityManager.allPersons.size()+
                 "\nResourcesTypes: "+ EntityManager.allResources.keySet().size()+
                 "\nResources: "+ EntityManager.allResources.values().stream().mapToLong(List::size).sum()+
-                "\nQualifications: "+ EntityManager.allQualifications.size()+
-                "\nParallelExecutionEntities: "+ EntityManager.allParallelExecutionEntities.size()
+                "\nQualifications: "+ EntityManager.allQualifications.size()
         );
 
         Scanner scanner = new Scanner(System.in);
@@ -137,45 +135,11 @@ public class Importer {
 
     }
 
-    private static void importParallelExecutionEntities(){
-        ResIterator iterator= retrieveIterator(parallelExecutionName);
-        Property startingOn= baseModel.getProperty(ontologyPrefix+ PropertyTypes.startingOnTask);
-        Property endingOn= baseModel.getProperty(ontologyPrefix+ PropertyTypes.endingOnTask);
-
-        while(iterator.hasNext()){
-            Resource resource= iterator.nextResource();
-            Statement statement= resource.getProperty(parallelExecutionName);
-            String startingOnTaskName= "";
-            String endingOnTaskName= "";
-            if(statement != null){
-                String name = statement.getObject().asLiteral().getString();
-                try {
-                    startingOnTaskName = resource.getProperty(startingOn).getResource().getProperty(taskName).getObject().asLiteral().getString();
-                }catch(NullPointerException e){
-                    Printer.errorPrint(Sources.Importer.name(), "problems importing the execution Entity "+ name+"\n" +
-                            "this needs the startingOnTask property, terminating");
-                    System.exit(-1);
-                }
-                try {
-                    endingOnTaskName = resource.getProperty(endingOn).getResource().getProperty(taskName).getObject().asLiteral().getString();
-                }catch(NullPointerException e){
-                    Printer.errorPrint(Sources.Importer.name(), "problems importing the execution Entity "+ name+"\n" +
-                            "this needs the endingOnTask property, terminating");
-                    System.exit(-1);
-                }
-                EntityManager.addParallelExecutionEntity(name, startingOnTaskName, endingOnTaskName);
-            }
-
-
-        }
-
-    }
 
     private static void importWorkflow(){
         ResIterator iterator= retrieveIterator(workflowName);
         Property endTaskIsProperty= ontModel.getProperty(ontologyPrefix+ PropertyTypes.isEndOfWorkflow);
         Property startTaskIsProperty= ontModel.getProperty(ontologyPrefix+ PropertyTypes.isStartOfWorkflow);
-        Property hasParallelExecution= ontModel.getProperty(ontologyPrefix+ PropertyTypes.hasParallelExecution);
 
 
         while(iterator.hasNext()){
@@ -185,6 +149,7 @@ public class Importer {
             Statement startTaskIsStatement= resource.getProperty(startTaskIsProperty);
             String startTaskName="";
             String endTaskName="";
+
             if(endTaskIsStatement!= null){
                 endTaskName= endTaskIsStatement.getResource().getProperty(taskName).getObject().asLiteral().getString();
             }else{
@@ -197,16 +162,9 @@ public class Importer {
                 Printer.errorPrint(Sources.Importer.name(), "No startTask specified for workflow "+ name+" terminating");
                 System.exit(-1);
             }
-            StmtIterator iter = resource.listProperties(hasParallelExecution);
-            List<String> parallelExecutionNames= new LinkedList<>();
-            if(iter!= null){
-                while(iter.hasNext()){
-                    Statement st = iter.nextStatement();
-                    String parallelExecution= st.getObject().asResource().getProperty(parallelExecutionName).getObject().asLiteral().getString();
-                    parallelExecutionNames.add(parallelExecution);
-                }
-            }
-            EntityManager.addWorkflow(name, startTaskName, endTaskName, parallelExecutionNames);
+
+
+            EntityManager.addWorkflow(name, startTaskName, endTaskName);
 
         }
     }
@@ -216,8 +174,6 @@ public class Importer {
         while(iterator.hasNext()){
             Resource resource= iterator.nextResource();
             Statement statement= resource.getProperty(resourceTypeName);
-
-
 
             String name = statement.getObject().asLiteral().getString();
             boolean unlimitedResource = false;
@@ -230,7 +186,6 @@ public class Importer {
             }
 
             EntityManager.addResourceType(name, unlimitedResource);
-
 
         }
     }

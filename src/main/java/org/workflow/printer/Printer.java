@@ -5,13 +5,14 @@ import org.workflow.ClassTypes;
 import org.workflow.Classes.Task;
 import org.workflow.EntityManager;
 import org.workflow.PropertyTypes;
+import org.workflow.TimeManager;
 
 import java.util.Arrays;
 
 public class Printer {
     @Description("print Output, first Param is Source (f.e. Name), second Param is Message")
     public static void print(String source, String message){
-        System.out.println(source+": "+ message);
+        System.out.println(source+":"+ TimeManager.getSimTime()+":" + message);
     }
 
 
@@ -124,10 +125,6 @@ public class Printer {
             }case PERSON -> {
                 System.out.println("\nAll Person:\n");
                 EntityManager.allPersons.values().forEach(System.out::println);
-            }
-            case PARALLELEXECUTIONENTITIES -> {
-                System.out.println("\nAll ParallelExecutionEntities:\n");
-                EntityManager.allParallelExecutionEntities.values().forEach(System.out::println);
             }
             case WORKFLOW -> {
                 System.out.println("\nAll Workflows:\n");

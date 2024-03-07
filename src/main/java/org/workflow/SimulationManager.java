@@ -10,17 +10,19 @@ public class SimulationManager {
     
     static PriorityQueue<Event> eventQueue;
     //currently only one Workflow
-    static Workflow workflow    ;
+    public static Workflow workflow;
     
     public static void init(){
-        eventQueue= new PriorityQueue<>(compareEvents);
+        eventQueue= new PriorityQueue<>(compareEventsByTime);
         eventQueue.addAll(EntityManager.allEvents.values());
+        workflow.initTasksMap();
 
     }
 
     public static void runSimulation(){
 
         TimeManager.startTimeManager();
+        workflow.startWorkflow();
 
         while(!eventQueue.isEmpty()){
             Event e = null;
@@ -39,7 +41,7 @@ public class SimulationManager {
 
 
     
-    private static Comparator<Event> compareEvents = new Comparator<Event>() {
+    private static Comparator<Event> compareEventsByTime = new Comparator<Event>() {
         @Override
         public int compare(Event o1, Event o2) {
             if(o1.getStartTime()<o2.getStartTime())
