@@ -1,5 +1,6 @@
 package org.workflow.Classes;
 
+import com.google.common.collect.Multimap;
 import lombok.Getter;
 import lombok.Setter;
 import org.workflow.TimeManager;
@@ -80,6 +81,8 @@ public class Task {
     private boolean allResourcesAssigned = false;
     private boolean allQualificationsAssigned = false;
 
+    private Multimap<String, Resource> assertedResources;
+
 
 
 
@@ -128,6 +131,8 @@ public class Task {
             }*/
 
         }
+
+
         Thread.currentThread().interrupt();
 
 
@@ -162,4 +167,6 @@ public class Task {
                 ", start=" + start +
                 '}';
     }
+
+
 }

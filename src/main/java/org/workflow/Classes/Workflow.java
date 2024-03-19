@@ -109,7 +109,13 @@ public class Workflow {
          */
 
         List<String> endedTasks = runningTasks.entrySet().stream().filter(stringTaskRunConceptEntry -> {
-            return  stringTaskRunConceptEntry.getValue().t.isInterrupted();
+            if(stringTaskRunConceptEntry.getValue().t.isInterrupted()){
+                ResourceManager.freeResources(stringTaskRunConceptEntry.getValue().getTask());
+                return true;
+            }else{
+                return false;
+            }
+
         }).map(Map.Entry::getKey).toList();
         if(!endedTasks.isEmpty())
         System.out.println("\n##################################################\n" +
@@ -150,7 +156,7 @@ public class Workflow {
                     Printer.print(e.getName(), "Planned TRC on "+ follower.getName()+" event was processed by all predecessors");
                 }else{
                     List<String> causes= predecessors.stream().filter(t-> !t.hasProcessedEvent(e.getName())).map(Task::getName).toList();
-                    Printer.print(e.getName(), "Couldn't plan "+ taskName+" as predecessors\n" +
+                    Printer.print(e.getName(), "Couldn't plan "+ follower.getName()+" as predecessors\n" +
                             Arrays.toString(causes.toArray()) +" haven't processed the event");
 
                 }
@@ -183,16 +189,27 @@ public class Workflow {
                     "\tSTARTING EXECUTIONS\n" + "\ttime: " + TimeManager.getSimTime());
             printed= true;
         }
+
+
         Set<String> taskNames= waitingTasks.keySet();
         for(String taskName: taskNames){
             if(freeTasks.contains(taskName) && !waitingTasks.get(taskName).isEmpty()){
-                TaskRunConcept trc= waitingTasks.get(taskName).poll();
-                freeTasks.remove(taskName);
-                runningTasks.put(taskName, trc);
-                trc.start();
+
+                TaskRunConcept trc= waitingTasks.get(taskName).peek();
+                assert trc != null;
+                if(ResourceManager.checkResourceAssertionPossible(trc)) {
+                    waitingTasks.get(taskName).poll();
+                    freeTasks.remove(taskName);
+                    runningTasks.put(taskName, trc);
+                    trc.start();
+                }else{
+                    Printer.errorPrint(trc.event.getName()," couldn't start task due to missing Resources");
+                }
             }
         }
     }
+
+
 
 
 

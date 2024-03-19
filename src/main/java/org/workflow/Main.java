@@ -1,6 +1,8 @@
 package org.workflow;
 
 
+import org.workflow.Classes.ResourceManager;
+
 public class Main {
 
     /**
@@ -16,6 +18,7 @@ public class Main {
     public static void main(String[] args) {
         EntityManager.init();
         Importer.importOWL();
+        ResourceManager.initResourceManager();
         SimulationManager.init();
         SimulationManager.runSimulation();
     }

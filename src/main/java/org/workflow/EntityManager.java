@@ -126,15 +126,7 @@ public class EntityManager {
                     "names have to be unique!!!!\n##################\n#################\n#################\n#################");
         }
     }
-    public static void addResource(String name, String type){
-        if(!allResources.containsKey(type)){
-            throw new IllegalStateException("there was no resourceType "+ type +" imported before importing a resource of this type "+ " resource Name: "+ name);
-        }else{
-            List<Resource> list= allResources.get(type);
-            list.add(new Resource(name, type));
-            allResources.replace(type, list);
-        }
-    }
+
 
     public static void addQualification(String name){
         if(!allQualifications.containsKey(name)) {

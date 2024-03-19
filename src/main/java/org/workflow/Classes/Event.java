@@ -49,7 +49,6 @@ public class Event {
         this.priority= priority;
         this.startTime=startTime;
         this.startTask= startTask;
-
     }
 
 

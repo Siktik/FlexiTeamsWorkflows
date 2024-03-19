@@ -43,10 +43,8 @@ public class Importer {
     private static Property eventName;
     private static Property qualificationName;
     private static Property taskName;
-    private static Property resourceName;
     private static Property personName;
     private static Property resourceTypeName;
-    private static Property parallelExecutionName;
     private static Property workflowName;
 
 
@@ -63,7 +61,6 @@ public class Importer {
         importQualifications();
         importPersons();
         importResourceTypes();
-        importResources();
         importTasks();
         importWorkflow();
         importEvents();
@@ -128,9 +125,7 @@ public class Importer {
         eventName = baseModel.getProperty(ontologyPrefix+ PropertyTypes.eventName);
         taskName= baseModel.getProperty(ontologyPrefix+ PropertyTypes.taskName);
         personName= baseModel.getProperty(ontologyPrefix+ PropertyTypes.personName);
-        resourceName= baseModel.getProperty(ontologyPrefix+ PropertyTypes.resourceName);
         resourceTypeName= baseModel.getProperty(ontologyPrefix+ PropertyTypes.resourceTypeName);
-        parallelExecutionName= baseModel.getProperty(ontologyPrefix+ PropertyTypes.parallelExecutionHasName);
         workflowName= baseModel.getProperty(ontologyPrefix+ PropertyTypes.workflowHasName);
 
     }
@@ -375,46 +370,7 @@ public class Importer {
         }
     }
 
-    /**
-     * this follows the concept of the other import methods, look them up for explanation
-     */
-    private static void importResources(){
 
-        ResIterator iterator= retrieveIterator(resourceName);
-        Property isOfResourceType= baseModel.getProperty(ontologyPrefix+ PropertyTypes.isOfResourceType);
-
-
-        while(iterator.hasNext()){
-            Resource resource= iterator.nextResource();
-
-            String name= resource.getProperty(resourceName).getObject().asLiteral().getString();
-            String resourceTypeName;
-            Resource resourceType;
-
-            try {
-                resourceType = resource.getProperty(isOfResourceType).getResource();
-                resourceTypeName = resourceType.getProperty(Importer.resourceTypeName).getObject().asLiteral().getString();
-
-                if(EntityManager.allResourceTypes.get(resourceTypeName).isUnlimited()){
-                    Printer.errorPrint(Sources.Importer.name(), "resource "+ name + " is assigned the type "+ resourceTypeName+" this type is marked as unlimited, there wont be any" +
-                            "resources instantiated that have a resource type which is marked as unlimited");
-                    continue;
-                }
-
-
-            }catch(NullPointerException e){
-                e.printStackTrace();
-                Printer.errorPrint(Sources.Importer.name(), "The resource " + name +" is missing properties, also check nested Objects like ResourceType to contain" +
-                        " all necessary properties");
-                Printer.printPropertyRules(ClassTypes.RESOURCE);
-                continue;
-            }
-
-            EntityManager.addResource(name,resourceTypeName);
-
-        }
-
-    }
 
     /**
      * this follows the concept of the other import methods, look them up for explanation

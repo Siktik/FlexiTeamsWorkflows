@@ -7,5 +7,6 @@ public enum Sources {
     SimulationManager,
     TimeManager,
     Workflow,
-    Task
+    Task,
+    ResourceManager
 }
