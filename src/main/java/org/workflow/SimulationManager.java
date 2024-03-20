@@ -14,7 +14,6 @@ public class SimulationManager {
 	public static void init() {
 		eventQueue = new PriorityQueue<>(compareEventsByTime);
 		eventQueue.addAll(EntityManager.allEvents.values());
-		workflow.initTasksMap();
 	}
 
 	public static void runSimulation() {

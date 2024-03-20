@@ -58,13 +58,13 @@ public class PropertyTypes {
 	 */
 	static String isOfResourceType = "isOfResourceType";
 	static String unlimitedResource = "unlimited";
+	static String limitedNumber ="limitedNumber";
 	/**
 	 * workflow related
 	 */
 	static String isStartOfWorkflow = "startTaskIs";
 	static String isEndOfWorkflow = "endTaskIs";
-	static String hasParallelExecution = "hasParallelExecution";
-	static String innerTaskIs = "innerTaskIs";
+
 
 	public static Map<ClassTypes, List<String>> propertyRulesMap =
 		new HashMap<>() {

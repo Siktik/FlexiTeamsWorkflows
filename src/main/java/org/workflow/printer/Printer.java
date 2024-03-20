@@ -20,7 +20,7 @@ public class Printer {
 	}
 
 	public static void errorPrint(String source, String message) {
-		System.err.println(source + ": " + message);
+		System.err.println(source + ":" + TimeManager.getSimTime() + ":" + message);
 	}
 
 	public static String printPropertyRules(ClassTypes type) {

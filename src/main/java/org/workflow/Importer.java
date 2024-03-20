@@ -221,26 +221,44 @@ public class Importer {
 		Property unlimitedResources = baseModel.getProperty(
 			ontologyPrefix + PropertyTypes.unlimitedResource
 		);
+		Property limitedNumber = baseModel.getProperty(ontologyPrefix + PropertyTypes.limitedNumber);
+
 		while (iterator.hasNext()) {
 			Resource resource = iterator.nextResource();
 			Statement statement = resource.getProperty(resourceTypeName);
 
 			String name = statement.getObject().asLiteral().getString();
 			boolean unlimitedResource = false;
+			int limitedNumberValue = 0;
 			Statement unlimitedResourceStatement = resource.getProperty(
 				unlimitedResources
 			);
+			Statement limitedNumberStatement = resource.getProperty(limitedNumber);
+
+			if(unlimitedResourceStatement == null && limitedNumber == null){
+				Printer.errorPrint(Sources.Importer.name(), "couldnt import a resourceType with name "+ name +
+						" :: it seems like there is no specification for the occasion type");
+				continue;
+			}
 
 			if (unlimitedResourceStatement != null) {
 				unlimitedResource = unlimitedResourceStatement
 					.getObject()
 					.asLiteral()
 					.getBoolean();
-			} else {
-				System.err.println("unlimited property not there");
+			}
+			if(limitedNumberStatement != null){
+				limitedNumberValue = limitedNumberStatement.getObject().asLiteral().getInt();
+			}
+			if(unlimitedResource && limitedNumberValue > 0){
+				Printer.errorPrint(Sources.Importer.name(), "couldn't import a resourceType with name "+ name +
+						"\nit seems like there are two occasion types specified, it is rather unlimited" +
+						"or has a certain numebr of occasions::\n specified unlimited: "+unlimitedResource+ " occasions: "
+				+ limitedNumberValue);
+				continue;
 			}
 
-			EntityManager.addResourceType(name, unlimitedResource);
+			EntityManager.addResourceType(name, unlimitedResource, limitedNumberValue);
 		}
 	}
 

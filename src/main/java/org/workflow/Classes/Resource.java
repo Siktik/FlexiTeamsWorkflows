@@ -12,7 +12,7 @@ public class Resource {
 	public Resource(ResourceType type) {
 		this.id = type.retrieveID();
 		this.type = type;
-		System.out.println(this);
+		//System.out.println(this);
 	}
 
 	@Override

@@ -667,8 +667,8 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Stethoscope">
         <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
+        <untitled-ontology-10:limitedNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1</untitled-ontology-10:limitedNumber>
         <untitled-ontology-10:resourceTypeHasName>Stethoscope</untitled-ontology-10:resourceTypeHasName>
-        <untitled-ontology-10:unlimited rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:unlimited>
     </owl:NamedIndividual>
     
 
@@ -687,8 +687,8 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:X-ray_machine">
         <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
+        <untitled-ontology-10:limitedNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1</untitled-ontology-10:limitedNumber>
         <untitled-ontology-10:resourceTypeHasName>X-ray_machine</untitled-ontology-10:resourceTypeHasName>
-        <untitled-ontology-10:unlimited rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:unlimited>
     </owl:NamedIndividual>
     
 
@@ -702,6 +702,7 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
         <untitled-ontology-10:taskNeedsQualification rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Qualification:Nurse"/>
         <untitled-ontology-10:taskNeedsResource rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:AdmissionDetails"/>
         <untitled-ontology-10:taskNeedsResource rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Diet_Details"/>
+        <untitled-ontology-10:taskNeedsResource rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Stethoscope"/>
         <untitled-ontology-10:taskHasName>Instruction_to_Patient</untitled-ontology-10:taskHasName>
         <untitled-ontology-10:taskHasTimeNeeded rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">10</untitled-ontology-10:taskHasTimeNeeded>
         <untitled-ontology-10:taskPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1</untitled-ontology-10:taskPriority>

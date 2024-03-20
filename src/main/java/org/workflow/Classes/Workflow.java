@@ -37,6 +37,7 @@ public class Workflow {
 	 */
 	private Map<String, TaskRunConcept> runningTasks;
 	private HashSet<String> freeTasks;
+	private HashSet<String> waitingForResources;
 
 	private Map<String, PriorityQueue<TaskRunConcept>> waitingTasks;
 
@@ -49,8 +50,7 @@ public class Workflow {
 		this.name = name;
 		this.startTask = startTask;
 		this.endTask = endTask;
-		runningTasks = new Hashtable<>();
-		waitingTasks = new Hashtable<>();
+
 		workflowMainThread = new Thread(this::runWorkflow);
 	}
 
@@ -113,24 +113,21 @@ public class Workflow {
 		List<String> endedTasks = runningTasks
 			.entrySet()
 			.stream()
-			.filter(stringTaskRunConceptEntry -> {
-				if (stringTaskRunConceptEntry.getValue().t.isInterrupted()) {
-					ResourceManager.freeResources(
-						stringTaskRunConceptEntry.getValue().getTask()
-					);
-					return true;
-				} else {
-					return false;
-				}
-			})
+			.filter(stringTaskRunConceptEntry ->
+					stringTaskRunConceptEntry
+							.getValue()
+							.t
+							.isInterrupted())
 			.map(Map.Entry::getKey)
 			.toList();
-		if (!endedTasks.isEmpty()) System.out.println(
+		if (!endedTasks.isEmpty()){ System.out.println(
 			"\n##################################################\n" +
 			"\tChecking and Planning FINISHED TASKS\n" +
 			"\ttime: " +
 			TimeManager.getSimTime()
 		);
+		}
+
 		for (String taskName : endedTasks) {
 			/**
 			 *  -   all tasks considered here have been finished
@@ -146,7 +143,10 @@ public class Workflow {
 			task.addProcessedEvent(trc.event);
 			runningTasks.remove(taskName);
 			freeTasks.add(taskName);
-			Printer.print(e.getName(), "Ended " + taskName);
+			Printer.print(e.getName(), "Ended " + taskName+" -> freeing resources");
+			ResourceManager.freeResources(
+					task.getAssertedResources()
+			);
 			/**
 			 * -    check all following tasks, initiate a TaskRunConcept for every task whose predecessors all match
 			 *      the condition that they have finished processing the event
@@ -212,9 +212,32 @@ public class Workflow {
 			printed = false;
 			Printer.print(e.getName(), "Planned start on " + e.startTask);
 		}
+
+		/**
+		 * could be done at start of this method as well were is another claussse checking for this condition
+		 * but the condition there is intended to give the print banner if the forloop following that statement will
+		 * have execution due to !list.empty
+		 * reevaluating resources suits better after all new tasks have been planned as its easier to
+		 * read on console
+		 * syntactically it wouldn't make a difference if you do it at first if clause or here as
+		 * the checking for resources does not have an impact on the rest of the planning method
+		 */
+		if(!endedTasks.isEmpty()){
+			System.out.println(
+					"\n##################################################\n" +
+							"\tRECHECKING TASKS WAITING FOR RESOURCES\n" +
+							"\ttime: " +
+							TimeManager.getSimTime()
+			);
+			waitingForResources= ResourceManager.revaluateTasks(waitingForResources);
+		}
+
+
 	}
 
 	private boolean printed = false;
+
+
 
 	private void startExecution() {
 		if (
@@ -233,25 +256,34 @@ public class Workflow {
 			printed = true;
 		}
 
+
 		Set<String> taskNames = waitingTasks.keySet();
 		for (String taskName : taskNames) {
 			if (
 				freeTasks.contains(taskName) &&
-				!waitingTasks.get(taskName).isEmpty()
+				!waitingTasks.get(taskName).isEmpty()&&
+						!waitingForResources.contains(taskName)
 			) {
 				TaskRunConcept trc = waitingTasks.get(taskName).peek();
+
 				assert trc != null;
-				if (ResourceManager.checkResourceAssertionPossible(trc)) {
+				if (ResourceManager.checkResourceAssertionPossible(trc, true, null)) {
 					waitingTasks.get(taskName).poll();
 					freeTasks.remove(taskName);
 					runningTasks.put(taskName, trc);
+					Printer.print(
+							trc.event.getName(),
+							"starting " + taskName + " needs: " + trc.getTask().getTimeNeeded() + " seconds"
+					);
 					trc.start();
 				} else {
+					waitingForResources.add(taskName);
 					Printer.errorPrint(
 						trc.event.getName(),
-						" couldn't start task due to missing Resources"
+						" couldn't start "+ trc.getTask().getName()+" due to missing Resources"
 					);
 				}
+
 			}
 		}
 	}
@@ -261,6 +293,7 @@ public class Workflow {
 		runningTasks = new Hashtable<>();
 		waitingTasks = new Hashtable<>();
 		freeTasks = new HashSet<>();
+		waitingForResources = new HashSet<>();
 		for (String key : taskNames) {
 			waitingTasks.put(
 				key,
@@ -277,6 +310,8 @@ public class Workflow {
 		public int compare(Event o1, Event o2) {
 			if (o1.getPriority() > o2.getPriority()) return -1;
 			if (o2.getPriority() > o1.getPriority()) return 1;
+			if (o1.getStartTime()< o2.getStartTime()) return -1;
+			if (o2.getStartTime()< o1.getStartTime()) return 1;
 			return 0;
 		}
 	};
@@ -287,6 +322,8 @@ public class Workflow {
 		public int compare(TaskRunConcept o1, TaskRunConcept o2) {
 			if (o1.event.getPriority() > o2.event.getPriority()) return -1;
 			if (o2.event.getPriority() > o1.event.getPriority()) return 1;
+			if (o1.event.getStartTime() < o2.event.getStartTime()) return -1;
+			if (o2.event.getStartTime()< o1.event.getStartTime()) return 1;
 			return 0;
 		}
 	};

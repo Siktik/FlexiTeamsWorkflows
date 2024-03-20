@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
+import org.workflow.EntityManager;
 import org.workflow.TimeManager;
 import org.workflow.printer.Printer;
 import org.workflow.printer.Sources;
@@ -70,6 +71,9 @@ public class Task {
 
 	private List<Qualifikation> qualificationsNeeded;
 
+	private List<String> resourceNamesUnlimited = new LinkedList<>();
+	private List<String> resourceNamesLimited = new LinkedList<>();
+
 	/**
 	 *
 	 */
@@ -103,6 +107,14 @@ public class Task {
 		this.resourcesPlaceholder = resourcesPlaceholder;
 		this.predecessorTaskPlaceHolder = taskHasPredecessors;
 		this.hasProcessed = new Hashtable<>();
+
+		getResourcesPlaceholder()
+				.forEach(type -> {
+					if (
+							EntityManager.allResourceTypes.get(type).isUnlimited()
+					) resourceNamesUnlimited.add(type);
+					else resourceNamesLimited.add(type);
+				});
 		//System.out.println(this);
 	}
 
@@ -122,10 +134,7 @@ public class Task {
 	public synchronized void runSelf() {
 		start = TimeManager.getSimTime();
 		int lastOutput = start;
-		Printer.print(
-			currentEvent.getName(),
-			"starting " + name + " needs: " + timeNeeded + " seconds"
-		);
+
 
 		while (TimeManager.getSimTime() - start < timeNeeded) {
 			/*if(TimeManager.getSimTime()-lastOutput >2){

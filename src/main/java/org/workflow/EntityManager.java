@@ -152,9 +152,9 @@ public class EntityManager {
 		}
 	}
 
-	public static void addResourceType(String name, boolean unlimitedResource)
+	public static void addResourceType(String name, boolean unlimitedResource, int limitedNumber)
 		throws IllegalStateException {
-		ResourceType type = new ResourceType(name, unlimitedResource);
+		ResourceType type = new ResourceType(name, unlimitedResource, limitedNumber);
 		if (allResources.containsKey(name)) throw new IllegalStateException(
 			"there cant be two resources of the same type"
 		);

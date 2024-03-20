@@ -3,6 +3,8 @@ package org.workflow.Classes;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Optional;
+
 @Getter
 @Setter
 public class ResourceType {
@@ -13,26 +15,25 @@ public class ResourceType {
 	private boolean unlimited = false;
 	private int numberOfOccasions = 0;
 
-	public ResourceType(String name, boolean unlimited) {
+	public ResourceType(String name, boolean unlimited, int numberOfOccasions) {
 		this.name = name;
+
 		setUnlimited(unlimited);
-		//System.out.println(this);
+		setNumberOfOccasions(numberOfOccasions);		//System.out.println(this);
 	}
 
 	public String retrieveID() {
 		return name + (idCounter++);
 	}
 
+
 	@Override
 	public String toString() {
-		return (
-			"ResourceType{" +
-			"name='" +
-			name +
-			'\'' +
-			", unlimited=" +
-			unlimited +
-			'}'
-		);
+		return "ResourceType{" +
+				"idCounter=" + idCounter +
+				", name='" + name + '\'' +
+				", unlimited=" + unlimited +
+				", numberOfOccasions=" + numberOfOccasions +
+				'}';
 	}
 }
