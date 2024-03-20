@@ -4,43 +4,51 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Person {
-    private static int idCounter=0;
-    private int id;
-    private String name;
-    private List<String> qualifications;
-    public Person(String name, List<String> qualifications){
-        this.id= idCounter++;
-        this.qualifications= qualifications;
-        this.name=name;
-        //System.out.println(this);
-    }
 
-    public void addQualification(String qualificationName){
-        this.qualifications.add(qualificationName);
-    }
+	private static int idCounter = 0;
+	private int id;
+	private String name;
+	private List<String> qualifications;
 
-    public String getName() {
-        return name;
-    }
+	public Person(String name, List<String> qualifications) {
+		this.id = idCounter++;
+		this.qualifications = qualifications;
+		this.name = name;
+		//System.out.println(this);
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void addQualification(String qualificationName) {
+		this.qualifications.add(qualificationName);
+	}
 
-    public List<String> getQualifications() {
-        return qualifications;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setQualifications(List<String> qualifications) {
-        this.qualifications = qualifications;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    @Override
-    public String toString() {
-        return "Person{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", qualifications=" + qualifications +
-                '}';
-    }
+	public List<String> getQualifications() {
+		return qualifications;
+	}
+
+	public void setQualifications(List<String> qualifications) {
+		this.qualifications = qualifications;
+	}
+
+	@Override
+	public String toString() {
+		return (
+			"Person{" +
+			"id=" +
+			id +
+			", name='" +
+			name +
+			'\'' +
+			", qualifications=" +
+			qualifications +
+			'}'
+		);
+	}
 }

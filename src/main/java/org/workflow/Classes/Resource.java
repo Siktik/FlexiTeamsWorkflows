@@ -5,23 +5,18 @@ import lombok.Getter;
 @Getter
 public class Resource {
 
-    private String id;
+	private String id;
 
-    private ResourceType type;
+	private ResourceType type;
 
-    public Resource(ResourceType type) {
-        this.id= type.retrieveID();
-        this.type= type;
-        System.out.println(this);
-    }
+	public Resource(ResourceType type) {
+		this.id = type.retrieveID();
+		this.type = type;
+		System.out.println(this);
+	}
 
-
-
-    @Override
-    public String toString() {
-        return "Resource{" +
-                "id=" + id +
-                ", type='" + type + '\'' +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "Resource{" + "id=" + id + ", type='" + type + '\'' + '}';
+	}
 }
