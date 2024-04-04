@@ -136,12 +136,11 @@ public class Workflow {
 			 *  **less computing needed if names of free tasks here are saved in another hashmap**
 			 *
 			 */
-			TaskRunConcept trc = runningTasks.get(taskName);
+			TaskRunConcept trc = runningTasks.remove(taskName);
 			Event e = trc.event;
 			Task task = trc.getTask();
 			task.currentEvent = null;
 			task.addProcessedEvent(trc.event);
-			runningTasks.remove(taskName);
 			freeTasks.add(taskName);
 			Printer.print(e.getName(), "Ended " + taskName+" -> freeing resources");
 			ResourceManager.freeResources(
@@ -153,11 +152,18 @@ public class Workflow {
 			 * -    add TaskRunConcepts to waiting Tasks Map
 			 */
 			if (task.getFollowingTasks().isEmpty()) {
-				Printer.print(
-					e.getName(),
-					"No followers for " + taskName + " execution ends here"
-				);
-				continue;
+				List<Task> predecessors = task.getPredecessorTasks();
+				if (
+						predecessors
+								.stream()
+								.allMatch(t -> t.hasProcessedEvent(e.getName()))
+				) {
+					Printer.print(
+							e.getName(),
+							"No followers for " + taskName + " execution ends here"
+					);
+					continue;
+				}
 			}
 			for (Task follower : task.getFollowingTasks()) {
 				List<Task> predecessors = follower.getPredecessorTasks();

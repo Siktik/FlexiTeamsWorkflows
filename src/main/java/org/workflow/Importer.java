@@ -16,6 +16,9 @@ import org.workflow.printer.Printer;
 import org.workflow.printer.Sources;
 
 public class Importer {
+	/**
+	 * entry point for importing an .owl ontology. only instances that have a name property will be imported
+	 */
 
 	private static String xsdPrefix;
 	private static String rdfsPrefix;
@@ -46,6 +49,10 @@ public class Importer {
 	private static Property resourceTypeName;
 	private static Property workflowName;
 
+	/**
+	 * main import method
+	 *
+	 */
 	public static void importOWL() {
 		try {
 			setUpModel();
@@ -55,7 +62,9 @@ public class Importer {
 		}
 		System.out.println("\n------------Importing Now------------\n");
 
-		//do not change the order unless you really need to, may cause problems
+		/**
+		 * this order is not random
+		 */
 		importQualifications();
 		importPersons();
 		importResourceTypes();
@@ -63,8 +72,20 @@ public class Importer {
 		importWorkflow();
 		importEvents();
 
+		/**
+		 * placeholders are strings, used to link resource types to tasks, follower tasks to its predecessors,
+		 * predecessor tasks to its followers, qualifications to tasks
+		 * for the linkage between tasks and qualifications this could be done while importing the tasks, as long as
+		 * qualifications and resources are already imported and set up, but for linkage between tasks we can only do this if all tasks
+		 * have already been imported
+		 * therefore currently all instances meant by the placeholders (String name of resourceType, Qualification, Task) are linked here
+		 */
+
 		EntityManager.findEntitiesForPlaceholders();
 
+		/**
+		 * printing the number of imported instances of each class
+		 */
 		Printer.print(
 			Sources.Importer.name(),
 			"Done Importing, numbers are:" +
@@ -119,6 +140,11 @@ public class Importer {
 		}
 	}
 
+	/**
+	 * sets up the baseModel by reading in the ontology into the variable ontModel
+	 * this ontModel has a baseModel where all knowledge modeled in the ontology, e.g. all instances can easily be accessed
+	 * @throws Exception
+	 */
 	private static void setUpModel() throws Exception {
 		String owlFilePath = "src/main/resources/experimental.rdf";
 		ontModel = ModelFactory.createOntologyModel();
@@ -216,6 +242,9 @@ public class Importer {
 		}
 	}
 
+	/**
+	 * this is the method that imports every resourceType that has a property resourceTypeName and all other necessary properties
+	 */
 	private static void importResourceTypes() {
 		ResIterator iterator = retrieveIterator(resourceTypeName);
 		Property unlimitedResources = baseModel.getProperty(
@@ -288,19 +317,25 @@ public class Importer {
 	 * we iterate through them, pick the current instance from the iterator as Resource and request other properties
 	 * an event also has a priority and a startTime, therefore we specify these properties using the baseModel
 	 * and ask for the values using the resource the iterator is currently pointing to
-	 * you have to be aware of the datatypes that are mapped along these properties, if you are not sure which it is, have a look in the ontology
+	 * you have to be aware of the datatypes that are mapped along these properties,
+	 * if you are not sure which it is, have a look in the ontology
 	 */
 	private static void importEvents() {
+		//the value alongside this property is the priority for this event
 		Property eventHasPriority = baseModel.getProperty(
 			ontologyPrefix + PropertyTypes.eventPriority
 		);
+		//the value alongside this property is the startTime of the event
 		Property eventHasStartTime = baseModel.getProperty(
 			ontologyPrefix + PropertyTypes.eventHasStartTime
 		);
+		//this is an iterator containing every instance that has the eventName property
 		ResIterator iterator = retrieveIterator(eventName);
 
 		while (iterator.hasNext()) {
+			//one event
 			Resource resource = iterator.nextResource();
+
 			String name = resource
 				.getProperty(eventName)
 				.getObject()
