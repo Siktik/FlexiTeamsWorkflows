@@ -21,7 +21,6 @@ public class ResourceManager {
 
 
 	private static Hashtable<String, ResourceType> allTypes;
-	public static Hashtable<String, List<Resource>> unlimitedResources;
 	public static Hashtable<String, List<Resource>> availableLimitedResources;
 
 	public static HashSet<String> revaluateTasks(HashSet<String> taskNames){
@@ -63,6 +62,7 @@ public class ResourceManager {
 				return false;
 			}
 		}
+
 		if(bind) {
 			if(!task.getResourceNamesUnlimited().isEmpty()) {
 				Printer.print(trc.event.getName(), task.getName() + " creating Resources for unlimited Types:");
@@ -70,6 +70,7 @@ public class ResourceManager {
 					Resource resource = new Resource(allTypes.get(type));
 					System.out.println("\t" + resource);
 					multiMap.put(type, resource);
+
 				}
 			}
 			if(!multiMap.isEmpty()) {
@@ -101,7 +102,6 @@ public class ResourceManager {
 
 	public static void initResourceManager() {
 		allTypes = EntityManager.allResourceTypes;
-		unlimitedResources = new Hashtable<>();
 		availableLimitedResources = new Hashtable<>();
 
 		for (ResourceType type : allTypes.values()) {

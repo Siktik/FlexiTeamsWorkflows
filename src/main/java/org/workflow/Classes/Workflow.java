@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.stream.Collectors;
 import javax.xml.transform.Source;
+
+import jdk.jfr.Description;
 import lombok.Getter;
 import lombok.Setter;
 import org.workflow.EntityManager;
@@ -13,6 +15,26 @@ import org.workflow.printer.Sources;
 
 @Getter
 public class Workflow {
+
+	/**
+	 * a workflow supports parallelism by a token principle
+	 * think of the workflow as if it was a directed acyclic Graph with a single entry point, a rootNode (startTask)
+	 * the rootNode cannot have parents, but k childs,
+	 * every node that is not the rootNode can have k parents and m childs
+	 * nodes can only be connected to nodes with a greater height
+	 * know if every node(task) saves information that it has processed a certain event, starting at the rootNode, we see
+	 * that if rootnode x has processed event z and we want to process x on childnode y we have to check x that has processed z and
+	 * we are good to go
+	 * by induction it can be shown that this works for any complex workflow as long as we have a directed acyclic graph with directed edges only
+	 * from node x with height t to any node having a height of t+n while n is strict positive
+	 *
+	 * a workflow therefore can have multiple endTasks, but only one startTask
+	 * this also means that there are no conditional ways supported, for this other approaches need to be implemented
+	 * also there are no loops possible
+	 * i didn't check which algorithms and datastructures would allow this but im pretty sure there are ways to achieve this
+	 *
+	 * but as i said with this implementation any workflow with a single startpoint and any form of parallelism can be simulated
+	 */
 
 	// at this time workflows can have only one start Task and one endTask
 	// moreover the simulator only works with linear workflows
@@ -31,17 +53,40 @@ public class Workflow {
 	private String name;
 
 	/**
-	 * this saves every task that is currently beeing executed
-	 * by checking if the thread of a runTaskConcept is interrupted we find tasks that finished their execution
-	 * currently only one instance of a task can be executed at a time
+	 * this saves every TRC that is currently beeing executed
+	 * by checking if the thread of a TRC is interrupted we find tasks that finished their execution
+	 * currently only one instance of a task can be executed at a time with this approach
 	 */
 	private Map<String, TaskRunConcept> runningTasks;
+	/**
+	 * here we save the names of tasks that are currently free and where a planned TRC could execute
+	 */
 	private HashSet<String> freeTasks;
+	/**
+	 * here we save names of tasks where a TRC couldnt execute as there were resources missing
+	 * this list of tasks is evaluated when TRC ended their execution as resources are freed then
+	 * by saving names of the task in this list we ensure that we dont always have to check if for a waiting TRC all resources are available
+	 * if the taskName where the TRC should execute is in this list while method startExecution is called, there are resources missing
+	 */
 	private HashSet<String> waitingForResources;
 
+	/**
+	 * key: taskName, value: TRCs sorted by priority that are planned to execute the task with name as key
+	 * when method planExecution() is called TRC are planned for every event that has just arrived or that finished on a task and has following tasks, while
+	 * checking that this event has been processed by all predecessors (parallelism)
+	 */
 	private Map<String, PriorityQueue<TaskRunConcept>> waitingTasks;
 
+	/**
+	 * some unique identifier for every instantiated workflow
+	 */
 	private static int idCounter = 0;
+
+	/**
+	 * the thread that is running the main method of this workflow
+	 * this is needed as the simulations main thread is running in the simulation manager distributing events to currently only one workflow but maybe
+	 * more workflows in the future
+	 */
 	private Thread workflowMainThread;
 
 	public Workflow(String name, Task startTask, Task endTask) {
@@ -74,13 +119,14 @@ public class Workflow {
 		queuedEvents.add(e);
 	}
 
-	int outPutLimiterTaskWaiting = TimeManager.getSimTime();
-	int outPutLimiterEventWaiting = TimeManager.getSimTime();
 
 	/**
-	 * the main of a Workflow, don't change the order of the method calls unless you know what the effect would be
+	 * the main of a Workflow, don't change the order of the method be
 	 */
 	private void runWorkflow() {
+		/**
+		 * set working to false on some condition to break from the currently infinite while loop
+		 */
 		working = true;
 		initTasksMap();
 		System.out.println(
