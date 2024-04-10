@@ -294,6 +294,9 @@ public class Workflow {
 		}
 	}
 
+	/**
+	 * Initializer
+	 */
 	public void initTasksMap() {
 		Set<String> taskNames = EntityManager.allTasks.keySet();
 		runningTasks = new Hashtable<>();

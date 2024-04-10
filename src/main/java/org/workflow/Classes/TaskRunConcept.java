@@ -4,6 +4,13 @@ import org.workflow.EntityManager;
 
 public class TaskRunConcept {
 
+	/**
+	 * this class is used to link events to tasks
+	 * these are created to plan executions are then used to be executed
+	 * the thread safed here is supposed to run the task
+	 * there are no multiple concurrent executions of tasks possible at the moment as this is not coded
+	 */
+
 	public Event event;
 	public Thread t;
 	public String taskName;
