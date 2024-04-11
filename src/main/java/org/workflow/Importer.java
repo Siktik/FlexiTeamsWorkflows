@@ -118,16 +118,6 @@ public class Importer {
 
 			if (input.equals("y")) {
 				Printer.printEntityDetails(true, null);
-				/*System.out.println("print Details for all Entities type \"all\"? Else type \"E\"(Event) or \"T\"(Task), or\"R\"(Resource)" +
-                        " or \"Q\"(Qualification) or \"RT\"(ResourceType) or \"Person\" (Enter 'y' for Yes, 'n' for No)");
-                while(true){
-
-                    input= scanner.nextLine().toLowerCase();
-                    if(input.equals("all")){
-                        Printer.printEntityDetails(true, null);
-                        break;
-                    }
-                }*/
 				break;
 			} else if (input.equals("n")) {
 				break;
@@ -388,6 +378,10 @@ public class Importer {
 	 * if modelled wrong and there were multiple values for the priority f.e. only one of them will be used by implementation
 	 */
 	private static void importTasks() {
+
+		/**
+		 * declaring properties that are to request
+		 */
 		Property taskHasPriority = baseModel.getProperty(
 			ontologyPrefix + PropertyTypes.taskPriority
 		);
@@ -412,10 +406,15 @@ public class Importer {
 		Property taskNeedsResource = baseModel.getProperty(
 			ontologyPrefix + PropertyTypes.taskNeedsResource
 		);
+
+		/**
+		 * entities without a name property won't be found by importer
+		 */
 		ResIterator iterator = retrieveIterator(taskName);
 
 		while (iterator.hasNext()) {
 			Resource resource = iterator.nextResource();
+
 
 			String name = resource
 				.getProperty(taskName)
@@ -424,146 +423,111 @@ public class Importer {
 				.getString();
 			int priority;
 			int timeNeeded;
-			boolean startTask;
-			boolean endTask;
+			boolean startTask = false;
+			boolean endTask = false;
 
 			List<String> taskIsFollowedByPlaceholder = new LinkedList<>();
 			List<String> taskHasPredecessors = new LinkedList<>();
 
-			try {
-				priority = resource
-					.getProperty(taskHasPriority)
-					.getObject()
-					.asLiteral()
-					.getInt();
-				timeNeeded = resource
-					.getProperty(taskTimeNeeded)
-					.getObject()
-					.asLiteral()
-					.getInt();
-			} catch (NullPointerException e) {
-				Printer.errorPrint(
-					Sources.Importer.name(),
-					"problems importing the Task " +
-					name +
-					"\n" +
-					"make sure this Task has the must have properties\n" +
-					Printer.printPropertyRules(ClassTypes.TASK)
-				);
+
+			Statement priorityStatement = resource
+					.getProperty(taskHasPriority);
+			if(priorityStatement == null){
+				Printer.errorPrint(Sources.Importer.name(),"no priority for task with name "+ name);
 				continue;
+			}else{
+				priority = priorityStatement.getObject().asLiteral().getInt();
 			}
-			try {
-				endTask = resource
-					.getProperty(taskIsEndTask)
-					.getObject()
-					.asLiteral()
-					.getBoolean();
-			} catch (NullPointerException e) {
-				endTask = false;
-			}
-			try {
-				startTask = resource
-					.getProperty(taskIsStartTask)
-					.getObject()
-					.asLiteral()
-					.getBoolean();
-			} catch (NullPointerException e) {
-				startTask = false;
+			Statement timeNeededStatement = resource
+					.getProperty(taskTimeNeeded);
+			if(timeNeededStatement == null){
+				Printer.errorPrint(Sources.Importer.name(),"no timeNeeded for task with name "+ name);
+				continue;
+			}else{
+				timeNeeded = timeNeededStatement.getObject().asLiteral().getInt();
 			}
 
-			// if no end Task, there are one or more tasks to follow
-			if (!endTask) {
-				try {
-					StmtIterator iter = resource.listProperties(
-						taskIsFollowedBy
-					);
 
-					while (iter.hasNext()) {
-						Statement st = iter.nextStatement();
-						taskIsFollowedByPlaceholder.add(
+			StmtIterator iterFollower = resource.listProperties(
+					taskIsFollowedBy
+			);
+			if(iterFollower == null){
+				endTask = true;
+			}else {
+				while (iterFollower.hasNext()) {
+					Statement st = iterFollower.nextStatement();
+					taskIsFollowedByPlaceholder.add(
 							st
-								.getObject()
-								.asResource()
-								.getProperty(taskName)
-								.getObject()
-								.asLiteral()
-								.getString()
-						);
-						//System.out.println(name+" is followed by "+st.getObject().asResource().getProperty(taskHasName).getObject().asLiteral().getString());
-					}
-				} catch (NullPointerException e) {
-					Printer.errorPrint(
-						Sources.Importer.name(),
-						"problems importing the Task " +
-						name +
-						"\n" +
-						"there are no predecessor tasks linked fo a task that is not a start task"
+									.getObject()
+									.asResource()
+									.getProperty(taskName)
+									.getObject()
+									.asLiteral()
+									.getString()
 					);
-					System.exit(-1);
+					//System.out.println(name+" is followed by "+st.getObject().asResource().getProperty(taskHasName).getObject().asLiteral().getString());
 				}
 			}
-			if (!startTask) {
-				try {
-					StmtIterator iter = resource.listProperties(
-						taskHasPredecessor
-					);
 
-					while (iter.hasNext()) {
-						Statement st = iter.nextStatement();
-						taskHasPredecessors.add(
+
+			StmtIterator iterPredecessor = resource.listProperties(
+				taskHasPredecessor
+			);
+			if(iterPredecessor == null){
+				startTask = true;
+			}else{
+				while (iterPredecessor.hasNext()) {
+					Statement st = iterPredecessor.nextStatement();
+					taskHasPredecessors.add(
 							st
-								.getObject()
-								.asResource()
-								.getProperty(taskName)
-								.getObject()
-								.asLiteral()
-								.getString()
-						);
-						//System.out.println(name+" is followed by "+st.getObject().asResource().getProperty(taskHasName).getObject().asLiteral().getString());
-					}
-				} catch (NullPointerException e) {
-					Printer.errorPrint(
-						Sources.Importer.name(),
-						"problems importing the Task " +
-						name +
-						"\n" +
-						"there are no predecessor tasks linked fo a task that is not a start task"
+									.getObject()
+									.asResource()
+									.getProperty(taskName)
+									.getObject()
+									.asLiteral()
+									.getString()
 					);
-					System.exit(-1);
+					//System.out.println(name+" is followed by "+st.getObject().asResource().getProperty(taskHasName).getObject().asLiteral().getString());
 				}
 			}
+
 
 			//importing all qualifications needed for the task
 			List<String> qualificationsNeeded = new LinkedList<>();
 			StmtIterator iter = resource.listProperties(taskNeedsQualification);
-			while (iter.hasNext()) {
-				Statement st = iter.nextStatement();
-				qualificationsNeeded.add(
-					st
-						.getObject()
-						.asResource()
-						.getProperty(qualificationName)
-						.getObject()
-						.asLiteral()
-						.getString()
-				);
+			if(iter != null) {
+				while (iter.hasNext()) {
+					Statement st = iter.nextStatement();
+					qualificationsNeeded.add(
+							st
+									.getObject()
+									.asResource()
+									.getProperty(qualificationName)
+									.getObject()
+									.asLiteral()
+									.getString()
+					);
+				}
 			}
 
 			//importing all resources needed for the task
 			List<String> resourcesPlaceholder = new LinkedList<>();
 			iter = resource.listProperties(taskNeedsResource);
-			while (iter.hasNext()) {
-				Statement st = iter.nextStatement();
-				resourcesPlaceholder.add(
-					st
-						.getObject()
-						.asResource() // this is the Resource, now get name
-						.getProperty(resourceTypeName)
-						.getObject()
-						.asLiteral()
-						.getString()
-				);
+			if(iter != null) {
+				while (iter.hasNext()) {
+					Statement st = iter.nextStatement();
+					resourcesPlaceholder.add(
+							st
+									.getObject()
+									.asResource() // this is the Resource, now get name
+									.getProperty(resourceTypeName)
+									.getObject()
+									.asLiteral()
+									.getString()
+					);
+				}
 			}
+
 			EntityManager.addTask(
 				name,
 				timeNeeded,
@@ -596,17 +560,19 @@ public class Importer {
 				.getString();
 			List<String> qualificationsNeeded = new LinkedList<>();
 			StmtIterator iter = resource.listProperties(hasQualifications);
-			while (iter.hasNext()) {
-				Statement st = iter.nextStatement();
-				qualificationsNeeded.add(
-					st
-						.getObject()
-						.asResource() // this is the qualification, now get name
-						.getProperty(qualificationName)
-						.getObject()
-						.asLiteral()
-						.getString()
-				);
+			if(iter!= null) {
+				while (iter.hasNext()) {
+					Statement st = iter.nextStatement();
+					qualificationsNeeded.add(
+							st
+									.getObject()
+									.asResource() // this is the qualification, now get name
+									.getProperty(qualificationName)
+									.getObject()
+									.asLiteral()
+									.getString()
+					);
+				}
 			}
 			EntityManager.addPerson(name, qualificationsNeeded);
 		}

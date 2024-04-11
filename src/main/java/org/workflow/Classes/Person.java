@@ -1,12 +1,22 @@
 package org.workflow.Classes;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.LinkedList;
 import java.util.List;
 
+@Getter
+@Setter
 public class Person {
+
+	/**
+	 * use unique identifiers
+	 */
 
 	private static int idCounter = 0;
 	private int id;
+
 	private String name;
 	private List<String> qualifications;
 
@@ -21,21 +31,7 @@ public class Person {
 		this.qualifications.add(qualificationName);
 	}
 
-	public String getName() {
-		return name;
-	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public List<String> getQualifications() {
-		return qualifications;
-	}
-
-	public void setQualifications(List<String> qualifications) {
-		this.qualifications = qualifications;
-	}
 
 	@Override
 	public String toString() {
