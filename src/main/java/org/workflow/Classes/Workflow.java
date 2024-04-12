@@ -71,6 +71,10 @@ public class Workflow {
 	private HashSet<String> waitingForResources;
 
 	/**
+	 * saves names of tasks where TRCs are waiting, quickRef
+	 */
+	private HashSet<String> tasksHaveWaitingTRC;
+	/**
 	 * key: taskName, value: TRCs sorted by priority that are planned to execute the task with name as key
 	 * when method planExecution() is called TRC are planned for every event that has just arrived or that finished on a task and has following tasks, while
 	 * checking that this event has been processed by all predecessors (parallelism)
@@ -148,9 +152,7 @@ public class Workflow {
 	}
 
 	private void planExecution() {
-		/**
-		 * update Priorities of waiting events possibly here
-		 */
+
 
 		/**
 		 * check finished events
@@ -292,6 +294,9 @@ public class Workflow {
 
 
 	private void startExecution() {
+		/**
+		 * printing Statement
+		 */
 		if (
 			waitingTasks
 				.values()
@@ -349,6 +354,7 @@ public class Workflow {
 		waitingTasks = new Hashtable<>();
 		freeTasks = new HashSet<>();
 		waitingForResources = new HashSet<>();
+		tasksHaveWaitingTRC= new HashSet<>();
 		for (String key : taskNames) {
 			waitingTasks.put(
 				key,
