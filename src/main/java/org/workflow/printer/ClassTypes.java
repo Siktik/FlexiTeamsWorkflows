@@ -1,4 +1,4 @@
-package org.workflow;
+package org.workflow.printer;
 
 public enum ClassTypes {
 	RESOURCE,
@@ -7,6 +7,5 @@ public enum ClassTypes {
 	EVENT,
 	TASK,
 	PERSON,
-	PARALLELEXECUTIONENTITIES,
 	WORKFLOW,
 }

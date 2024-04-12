@@ -1,4 +1,12 @@
-package org.workflow;
+package org.workflow.ImporterPackage;
+
+
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.rdf.model.*;
+import org.workflow.Simulation.EntityManager;
+import org.workflow.printer.ClassTypes;
+import org.workflow.printer.Printer;
+import org.workflow.printer.Sources;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -6,14 +14,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import org.apache.jena.base.Sys;
-import org.apache.jena.ontology.OntModel;
-import org.apache.jena.rdf.model.*;
-import org.workflow.Classes.Event;
-import org.workflow.Classes.ResourceType;
-import org.workflow.Classes.Task;
-import org.workflow.printer.Printer;
-import org.workflow.printer.Sources;
 
 public class Importer {
 	/**
@@ -96,13 +96,7 @@ public class Importer {
 			"\nPersons: " +
 			EntityManager.allPersons.size() +
 			"\nResourcesTypes: " +
-			EntityManager.allResources.keySet().size() +
-			"\nResources: " +
-			EntityManager.allResources
-				.values()
-				.stream()
-				.mapToLong(List::size)
-				.sum() +
+			EntityManager.allResourceTypes.keySet().size() +
 			"\nQualifications: " +
 			EntityManager.allQualifications.size()
 		);
@@ -456,6 +450,15 @@ public class Importer {
 			}else {
 				while (iterFollower.hasNext()) {
 					Statement st = iterFollower.nextStatement();
+
+					/**
+					 * example of handling objectProperties
+					 * getObject.asResource is the key here
+					 * asResource return the Object that was linked via the objectPropertie, here it is another task, having all of the
+					 * properties and task should have
+					 * we care only for the name of this linked task
+					 */
+
 					taskIsFollowedByPlaceholder.add(
 							st
 									.getObject()

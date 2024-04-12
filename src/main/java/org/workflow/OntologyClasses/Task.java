@@ -1,17 +1,15 @@
-package org.workflow.Classes;
+package org.workflow.OntologyClasses;
 
 import com.google.common.collect.Multimap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
 import lombok.Getter;
 import lombok.Setter;
-import org.workflow.EntityManager;
-import org.workflow.TimeManager;
-import org.workflow.printer.Printer;
-import org.workflow.printer.Sources;
+import org.workflow.Simulation.EntityManager;
+import org.workflow.SimulationHelpers.TimeManager;
 
 @Getter
 @Setter

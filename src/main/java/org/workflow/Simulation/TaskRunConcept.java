@@ -1,6 +1,7 @@
-package org.workflow.Classes;
+package org.workflow.Simulation;
 
-import org.workflow.EntityManager;
+import org.workflow.OntologyClasses.Event;
+import org.workflow.OntologyClasses.Task;
 
 public class TaskRunConcept {
 
@@ -15,7 +16,7 @@ public class TaskRunConcept {
 	public Thread t;
 	public String taskName;
 
-	TaskRunConcept(Event e, String task) {
+	public TaskRunConcept(Event e, String task) {
 		this.event = e;
 		this.taskName = task;
 	}

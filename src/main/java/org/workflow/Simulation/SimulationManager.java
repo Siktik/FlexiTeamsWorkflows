@@ -1,9 +1,10 @@
-package org.workflow;
+package org.workflow.Simulation;
 
 import java.util.Comparator;
 import java.util.PriorityQueue;
-import org.workflow.Classes.Event;
-import org.workflow.Classes.Workflow;
+import org.workflow.OntologyClasses.Event;
+import org.workflow.OntologyClasses.Workflow;
+import org.workflow.SimulationHelpers.TimeManager;
 
 public class SimulationManager {
 

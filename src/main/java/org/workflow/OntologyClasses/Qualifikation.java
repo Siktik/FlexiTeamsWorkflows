@@ -1,4 +1,4 @@
-package org.workflow.Classes;
+package org.workflow.OntologyClasses;
 
 public class Qualifikation {
 

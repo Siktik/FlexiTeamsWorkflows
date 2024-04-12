@@ -1,14 +1,7 @@
-package org.workflow.Classes;
+package org.workflow.OntologyClasses;
 
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
-import org.workflow.EntityManager;
-import org.workflow.printer.Printer;
-import org.workflow.printer.Sources;
 
 @Getter
 @Setter

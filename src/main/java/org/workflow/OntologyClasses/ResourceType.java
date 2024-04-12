@@ -1,9 +1,7 @@
-package org.workflow.Classes;
+package org.workflow.OntologyClasses;
 
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Optional;
 
 @Getter
 @Setter

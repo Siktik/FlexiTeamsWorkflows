@@ -1,13 +1,14 @@
-package org.workflow.Classes;
+package org.workflow.Simulation;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import java.util.*;
-import org.workflow.EntityManager;
+
+import org.workflow.OntologyClasses.Resource;
+import org.workflow.OntologyClasses.ResourceType;
+import org.workflow.OntologyClasses.Task;
 import org.workflow.printer.Printer;
 import org.workflow.printer.Sources;
-
-import javax.xml.transform.Source;
 
 public class ResourceManager {
 
@@ -20,9 +21,23 @@ public class ResourceManager {
 	 */
 
 
+	/**
+	 * same as in Entity manager, just for quickReference
+	 */
 	private static Hashtable<String, ResourceType> allTypes;
+	/**
+	 * the available Limited Resources, key is ResourceType Name, value is a List of all current available Resources of this Type
+	 * if the List is empty there is currently no Resource of this type available
+	 */
 	public static Hashtable<String, List<Resource>> availableLimitedResources;
 
+	/**
+	 * in workflow planExecution for every finished task all Resourcews are set free, at the end of the method we call this with the tasks that had
+	 * been waiting for resources before there had been resources set free, therefore w e reevaluate these here to update
+	 * the waitingForResources List in Workflow
+	 * @param taskNames
+	 * @return
+	 */
 	public static HashSet<String> revaluateTasks(HashSet<String> taskNames){
 		HashSet<String> newTaskNames= new HashSet<>();
 		for(String string: taskNames){
@@ -33,6 +48,18 @@ public class ResourceManager {
 		return  newTaskNames;
 	}
 
+
+	/**
+	 * this is used two way
+	 * 1. just check if a Assertion would be possible , by passing trc = null, bind = false, taskName=taskName
+	 * 2. check and if feasible assert all resources to the task, this is called right before a task would be executed
+	 * 	  pass trc= trc, bind = true, taskName = anything | null (ignored)
+	 * @param trc the TaskRunConcept
+	 * @param bind	if resources should be asserted, set only true if trc is passed
+	 * @param taskName if bind false and trc null, pass taskName to check if resources for this task are available
+	 * @return for case 1. true if all needed Resources available else false
+	 * 		   for case 2. true if all needed Resources available and have been bound to task in trc else false
+	 */
 	public static boolean checkResourceAssertionPossible(TaskRunConcept trc, boolean bind, String taskName) {
 		Task task;
 		if(bind){
@@ -89,7 +116,13 @@ public class ResourceManager {
 	}
 
 
-
+	/**
+	 * sets free al used resources for this task
+	 * we only care for limited as we have to put them back into our map
+	 * unlimited are thrown away here as they will be instantiated on demand
+	 * @param multimap where all used resources on this tasks are safed
+	 * @return currently always returns true
+	 */
 	public static boolean freeResources(Multimap<String, Resource> multimap) {
 
 		for (String key : multimap.keySet()) {
@@ -100,6 +133,9 @@ public class ResourceManager {
 		return true;
 	}
 
+	/**
+	 * initializer
+	 */
 	public static void initResourceManager() {
 		allTypes = EntityManager.allResourceTypes;
 		availableLimitedResources = new Hashtable<>();
@@ -114,6 +150,11 @@ public class ResourceManager {
 		}
 	}
 
+	/**
+	 * helper
+	 * @param type type of which resources are to be instantiated
+	 * @return the List of limited Resources that have eben instantiated by the information contained in the resourceType
+	 */
 	public static List<Resource> createMultipleResources(ResourceType type) {
 		System.out.println("Creating limited Resource::");
 		List<Resource> list = new LinkedList<>();

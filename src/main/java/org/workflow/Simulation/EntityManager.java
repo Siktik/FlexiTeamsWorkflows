@@ -1,8 +1,8 @@
-package org.workflow;
+package org.workflow.Simulation;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import org.workflow.Classes.*;
+
+import org.workflow.OntologyClasses.*;
 import org.workflow.printer.Printer;
 import org.workflow.printer.Sources;
 
@@ -34,8 +34,7 @@ public class EntityManager {
 	 * sorted tasks according to start-, end-, inner Task
 	 */
 
-	// key: resourceType
-	public static Hashtable<String, List<Resource>> allResources;
+
 	public static Hashtable<String, ResourceType> allResourceTypes;
 
 	/**
@@ -52,7 +51,6 @@ public class EntityManager {
 	public static void init() {
 		allEvents = new Hashtable<>();
 		allPersons = new Hashtable<>();
-		allResources = new Hashtable<>();
 		allResourceTypes = new Hashtable<>();
 		allTasks = new Hashtable<>();
 		allQualifications = new Hashtable<>();
@@ -64,30 +62,7 @@ public class EntityManager {
 		String startTask,
 		String endTask
 	) {
-		/*if(!allWorkflows.containsKey(name)){
-            List<ParallelExecution> parallelExecutions= parallelExecutionEntities.stream().map(e-> allParallelExecutionEntities.get(e)).toList();
-            List<Task> innerTasks= new LinkedList<>();
-            Task startingOnTask =allTasks.get(startTask);
 
-            if(startingOnTask == null){
-                Printer.errorPrint(Sources.EntityManager.name(), "There is no Task with the name "+ startTask+" when importing a " +
-                        "Workflow Entity that needs this task\n Terminating");
-                System.exit(-1);
-            }
-            Task endingOnTask =allTasks.get(endTask);
-            if(endingOnTask == null){
-                Printer.errorPrint(Sources.EntityManager.name(), "There is no Task with the name "+ endTask+" when importing a " +
-                        "Workflow Entity that needs this task\n Terminating");
-                System.exit(-1);
-            }
-
-            allWorkflows.put(name, new Workflow(name, allTasks.get(startTask), allTasks.get(endTask), parallelExecutions));
-        }else{
-            System.err.println("Did not instantiate a second Workflow with the name :"+ name+" \n" +
-                    "names have to be unique!!!!\n##################\n#################\n#################\n#################");
-        }
-
-         */
 		if (allWorkflows.isEmpty()) {
 			Workflow workflow = new Workflow(
 				name,
@@ -154,14 +129,12 @@ public class EntityManager {
 
 	public static void addResourceType(String name, boolean unlimitedResource, int limitedNumber)
 		throws IllegalStateException {
-		ResourceType type = new ResourceType(name, unlimitedResource, limitedNumber);
-		if (allResources.containsKey(name)) throw new IllegalStateException(
-			"there cant be two resources of the same type"
-		);
-		else {
-			allResources.put(name, new LinkedList<>());
-			allResourceTypes.put(name, type);
+		if(allResourceTypes.containsKey(name)){
+			Printer.errorPrint(Sources.EntityManager.name(), "there is already a ResourceType with name "+ name +" a second one will not be imported");
+		}else{
+			allResourceTypes.put(name, new ResourceType(name, unlimitedResource, limitedNumber));
 		}
+
 	}
 
 	public static void addTask(

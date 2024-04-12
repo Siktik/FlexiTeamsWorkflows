@@ -1,4 +1,4 @@
-package org.workflow;
+package org.workflow.SimulationHelpers;
 
 import java.sql.Time;
 

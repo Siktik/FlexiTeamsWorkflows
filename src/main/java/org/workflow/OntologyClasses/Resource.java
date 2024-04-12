@@ -1,6 +1,7 @@
-package org.workflow.Classes;
+package org.workflow.OntologyClasses;
 
 import lombok.Getter;
+import org.workflow.OntologyClasses.ResourceType;
 
 @Getter
 public class Resource {

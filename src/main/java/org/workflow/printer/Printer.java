@@ -2,11 +2,9 @@ package org.workflow.printer;
 
 import java.util.Arrays;
 import jdk.jfr.Description;
-import org.workflow.ClassTypes;
-import org.workflow.Classes.Task;
-import org.workflow.EntityManager;
-import org.workflow.PropertyTypes;
-import org.workflow.TimeManager;
+import org.workflow.Simulation.EntityManager;
+import org.workflow.ImporterPackage.PropertyTypes;
+import org.workflow.SimulationHelpers.TimeManager;
 
 public class Printer {
 
@@ -148,26 +146,6 @@ public class Printer {
 				EntityManager.allResourceTypes
 					.values()
 					.forEach(System.out::println);
-			}
-			case RESOURCE -> {
-				System.out.println("\nAll Resource:\n");
-
-				EntityManager.allResources
-					.values()
-					.stream()
-					.filter(e -> !e.isEmpty())
-					.forEach(
-						e ->
-							System.out.println(
-								"Resources of Type " +
-								e.get(0).getType() +
-								" exist " +
-								e.size() +
-								" times and all look like this" +
-								"\n" +
-								e.get(0).toString()
-							)
-					);
 			}
 			case QUALIFICATION -> {
 				System.out.println("\nAll Qualification:\n");

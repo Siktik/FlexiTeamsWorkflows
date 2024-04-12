@@ -1,4 +1,6 @@
-package org.workflow;
+package org.workflow.ImporterPackage;
+
+import org.workflow.printer.ClassTypes;
 
 import java.util.Arrays;
 import java.util.HashMap;

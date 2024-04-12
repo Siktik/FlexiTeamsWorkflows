@@ -1,17 +1,15 @@
-package org.workflow.Classes;
+package org.workflow.OntologyClasses;
 
 import java.util.*;
 import java.util.concurrent.PriorityBlockingQueue;
-import java.util.stream.Collectors;
-import javax.xml.transform.Source;
 
-import jdk.jfr.Description;
 import lombok.Getter;
 import lombok.Setter;
-import org.workflow.EntityManager;
-import org.workflow.TimeManager;
+import org.workflow.Simulation.EntityManager;
+import org.workflow.Simulation.ResourceManager;
+import org.workflow.Simulation.TaskRunConcept;
+import org.workflow.SimulationHelpers.TimeManager;
 import org.workflow.printer.Printer;
-import org.workflow.printer.Sources;
 
 @Getter
 public class Workflow {
@@ -31,12 +29,12 @@ public class Workflow {
 	 * a workflow therefore can have multiple endTasks, but only one startTask
 	 * this also means that there are no conditional ways supported, for this other approaches need to be implemented
 	 * also there are no loops possible
-	 * i didn't check which algorithms and datastructures would allow this but im pretty sure there are ways to achieve this
+	 * didn't check which algorithms and datastructures would allow this but im pretty sure there are ways to achieve this
 	 *
-	 * but as i said with this implementation any workflow with a single startpoint and any form of parallelism can be simulated
+	 * but as its been said with this implementation any workflow with a single startpoint and any form of parallelism can be simulated
 	 */
 
-	// at this time workflows can have only one start Task and one endTask
+	// at this time workflows can have only one start Task
 	// moreover the simulator only works with linear workflows
 	@Setter
 	private Task startTask;
@@ -93,6 +91,15 @@ public class Workflow {
 	 */
 	private Thread workflowMainThread;
 
+	/**
+	 * here the simulation manager adds events that are meant for this workflow
+	 * as the workflow also works on this queue, by removing events where he adds a planned TRC in planExecution, we need to prevent
+	 * ConcurrentModificationExceptions, as two thread are working on this queue
+	 * this is achieved by the PriorityBlockingQueue
+	 * this should not cause any remarkable performance bottleneck unless there are hundreds or thousands of events beeing scheduled within seconds
+	 */
+	private PriorityBlockingQueue<Event> queuedEvents;
+
 	public Workflow(String name, Task startTask, Task endTask) {
 		this.id = idCounter++;
 		queuedEvents = new PriorityBlockingQueue<Event>(1, comparingEvents);
@@ -103,20 +110,32 @@ public class Workflow {
 		workflowMainThread = new Thread(this::runWorkflow);
 	}
 
-	public void startWorkflow() {
-		workflowMainThread.start();
+	/**
+	 * Initializer
+	 */
+	public void initTasksMap() {
+		Set<String> taskNames = EntityManager.allTasks.keySet();
+		runningTasks = new Hashtable<>();
+		waitingTasks = new Hashtable<>();
+		freeTasks = new HashSet<>();
+		waitingForResources = new HashSet<>();
+		tasksHaveWaitingTRC= new HashSet<>();
+
+		/**
+		 * pre initializing with all taskNames as keys and empty priorityQueues for future waiting TRC
+		 */
+		for (String key : taskNames) {
+			waitingTasks.put(
+					key,
+					new PriorityQueue<TaskRunConcept>(comparingTRC)
+			);
+			freeTasks.add(key);
+		}
 	}
 
-	@Override
-	public String toString() {
-		return (
-			"Workflow{" +
-			"startTask=" +
-			startTask.getName() +
-			", endTask=" +
-			endTask.getName() +
-			'}'
-		);
+
+	public void startWorkflow() {
+		workflowMainThread.start();
 	}
 
 	public void addEventToQueue(Event e) {
@@ -150,6 +169,10 @@ public class Workflow {
 		}
 		Thread.currentThread().interrupt();
 	}
+
+	/**
+	 * Details in README
+	 */
 
 	private void planExecution() {
 
@@ -215,6 +238,7 @@ public class Workflow {
 			}
 			for (Task follower : task.getFollowingTasks()) {
 				List<Task> predecessors = follower.getPredecessorTasks();
+				String followerTaskName= follower.getName();
 				if (
 					predecessors
 						.stream()
@@ -222,17 +246,22 @@ public class Workflow {
 				) {
 					TaskRunConcept nextTRC = new TaskRunConcept(
 						e,
-						follower.getName()
+						followerTaskName
 					);
-					waitingTasks.get(follower.getName()).add(nextTRC);
+					waitingTasks.get(followerTaskName).add(nextTRC);
+					tasksHaveWaitingTRC.add(followerTaskName);
 					printed = false;
 					Printer.print(
 						e.getName(),
 						"Planned TRC on " +
-						follower.getName() +
+						followerTaskName +
 						" event was processed by all predecessors"
 					);
 				} else {
+					/**
+					 * this is in the case that the event has not been processed by all predecessor tasks
+					 * this does nothing than printing the reason at the moment
+					 */
 					List<String> causes = predecessors
 						.stream()
 						.filter(t -> !t.hasProcessedEvent(e.getName()))
@@ -241,7 +270,7 @@ public class Workflow {
 					Printer.print(
 						e.getName(),
 						"Couldn't plan " +
-						follower.getName() +
+						followerTaskName +
 						" as predecessors\n" +
 						Arrays.toString(causes.toArray()) +
 						" haven't processed the event"
@@ -263,6 +292,7 @@ public class Workflow {
 			Event e = queuedEvents.poll();
 			TaskRunConcept t = new TaskRunConcept(e, e.startTask);
 			waitingTasks.get(e.startTask).add(t);
+			tasksHaveWaitingTRC.add(e.startTask);
 			printed = false;
 			Printer.print(e.getName(), "Planned start on " + e.startTask);
 		}
@@ -293,6 +323,10 @@ public class Workflow {
 
 
 
+
+	/**
+	 * Details in README
+	 */
 	private void startExecution() {
 		/**
 		 * printing Statement
@@ -313,9 +347,8 @@ public class Workflow {
 			printed = true;
 		}
 
-
-		Set<String> taskNames = waitingTasks.keySet();
-		for (String taskName : taskNames) {
+		HashSet<String> toDelete= new HashSet<>();
+		for (String taskName : tasksHaveWaitingTRC) {
 			if (
 				freeTasks.contains(taskName) &&
 				!waitingTasks.get(taskName).isEmpty()&&
@@ -326,6 +359,8 @@ public class Workflow {
 				assert trc != null;
 				if (ResourceManager.checkResourceAssertionPossible(trc, true, null)) {
 					waitingTasks.get(taskName).poll();
+					if(waitingTasks.get(taskName).isEmpty())
+						toDelete.add(taskName);
 					freeTasks.remove(taskName);
 					runningTasks.put(taskName, trc);
 					Printer.print(
@@ -343,28 +378,16 @@ public class Workflow {
 
 			}
 		}
+		tasksHaveWaitingTRC.removeAll(toDelete);
 	}
+
+
+
+
 
 	/**
-	 * Initializer
+	 * the comparator used in the queuedEvents queue
 	 */
-	public void initTasksMap() {
-		Set<String> taskNames = EntityManager.allTasks.keySet();
-		runningTasks = new Hashtable<>();
-		waitingTasks = new Hashtable<>();
-		freeTasks = new HashSet<>();
-		waitingForResources = new HashSet<>();
-		tasksHaveWaitingTRC= new HashSet<>();
-		for (String key : taskNames) {
-			waitingTasks.put(
-				key,
-				new PriorityQueue<TaskRunConcept>(comparingTRC)
-			);
-			freeTasks.add(key);
-		}
-	}
-
-	private PriorityBlockingQueue<Event> queuedEvents;
 
 	private Comparator<Event> comparingEvents = new Comparator<Event>() {
 		@Override
@@ -376,6 +399,11 @@ public class Workflow {
 			return 0;
 		}
 	};
+
+	/**
+	 * the comparator used in the waitingTasks Map
+	 */
+
 	private Comparator<TaskRunConcept> comparingTRC = new Comparator<
 		TaskRunConcept
 	>() {
@@ -388,9 +416,20 @@ public class Workflow {
 			return 0;
 		}
 	};
+
 	/**
 	 * a helper class to map currently running tasks, the thread that is executing this task and the event that is currently
 	 * at this task in one object
 	 */
-
+	@Override
+	public String toString() {
+		return (
+				"Workflow{" +
+						"startTask=" +
+						startTask.getName() +
+						", endTask=" +
+						endTask.getName() +
+						'}'
+		);
+	}
 }
