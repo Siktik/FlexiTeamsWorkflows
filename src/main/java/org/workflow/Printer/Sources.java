@@ -1,4 +1,4 @@
-package org.workflow.printer;
+package org.workflow.Printer;
 
 public enum Sources {
 	EntityManager,

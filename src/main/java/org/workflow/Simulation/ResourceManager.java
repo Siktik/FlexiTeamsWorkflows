@@ -7,8 +7,8 @@ import java.util.*;
 import org.workflow.OntologyClasses.Resource;
 import org.workflow.OntologyClasses.ResourceType;
 import org.workflow.OntologyClasses.Task;
-import org.workflow.printer.Printer;
-import org.workflow.printer.Sources;
+import org.workflow.Printer.Printer;
+import org.workflow.Printer.Sources;
 
 public class ResourceManager {
 

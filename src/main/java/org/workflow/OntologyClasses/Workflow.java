@@ -9,7 +9,7 @@ import org.workflow.Simulation.EntityManager;
 import org.workflow.Simulation.ResourceManager;
 import org.workflow.Simulation.TaskRunConcept;
 import org.workflow.SimulationHelpers.TimeManager;
-import org.workflow.printer.Printer;
+import org.workflow.Printer.Printer;
 
 @Getter
 public class Workflow {

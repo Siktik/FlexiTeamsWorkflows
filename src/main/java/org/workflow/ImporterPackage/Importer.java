@@ -4,9 +4,9 @@ package org.workflow.ImporterPackage;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.rdf.model.*;
 import org.workflow.Simulation.EntityManager;
-import org.workflow.printer.ClassTypes;
-import org.workflow.printer.Printer;
-import org.workflow.printer.Sources;
+import org.workflow.Printer.ClassTypes;
+import org.workflow.Printer.Printer;
+import org.workflow.Printer.Sources;
 
 import java.io.FileInputStream;
 import java.io.InputStream;

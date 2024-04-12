@@ -1,4 +1,4 @@
-package org.workflow.printer;
+package org.workflow.Printer;
 
 import java.util.Arrays;
 import jdk.jfr.Description;
