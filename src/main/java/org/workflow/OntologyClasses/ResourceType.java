@@ -13,11 +13,13 @@ public class ResourceType {
 	private boolean unlimited = false;
 	private int numberOfOccasions = 0;
 
-	public ResourceType(String name, boolean unlimited, int numberOfOccasions) {
+	public ResourceType(String name, int numberOfOccasions) {
 		this.name = name;
 
-		setUnlimited(unlimited);
-		setNumberOfOccasions(numberOfOccasions);		//System.out.println(this);
+		if(numberOfOccasions == 0)
+			setUnlimited(true);
+		else
+			setNumberOfOccasions(numberOfOccasions);		//System.out.println(this);
 	}
 
 	public String retrieveID() {

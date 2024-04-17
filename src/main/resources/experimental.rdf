@@ -22,16 +22,6 @@
     
 
 
-    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#endTaskIs -->
-
-    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#endTaskIs">
-        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#workflowSpecifications"/>
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#workflow"/>
-        <rdfs:range rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
-    </owl:ObjectProperty>
-    
-
-
     <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#interarrivalTime -->
 
     <owl:ObjectProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#interarrivalTime">
@@ -46,6 +36,9 @@
     <owl:ObjectProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#personHasQualification">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#person"/>
         <rdfs:range rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#qualification"/>
+        <rdfs:comment>use this to link Instances of the Qualification Class to an instance of the Person class
+
+to link multiple Qualifications to a Person simply add this property multiple times</rdfs:comment>
     </owl:ObjectProperty>
     
 
@@ -67,6 +60,15 @@
         <owl:inverseOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskIsFollowedBy"/>
         <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
         <rdfs:range rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
+        <rdfs:comment>with this link an intance of a task a to a task b to state that task a lies before task b
+
+when modelling your workflow both directions need to be modelled, so dont only use taskIsFollowedBy, this will lead to faulty execution
+
+in future this should be instantly modelled as edges instead of bidirectional references
+
+use this property multiple times to link multiple tasks
+
+this is used to reliably model paralellis in a Azyclic Directed Graph with a single root (startTask)</rdfs:comment>
     </owl:ObjectProperty>
     
 
@@ -77,6 +79,9 @@
         <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskSpecifications"/>
         <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
         <rdfs:range rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
+        <rdfs:comment>with this link an intance of a task a to a task b to state that task a follows on task b
+
+use this property multiple times to link multiple tasks</rdfs:comment>
     </owl:ObjectProperty>
     
 
@@ -87,6 +92,11 @@
         <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskSpecifications"/>
         <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
         <rdfs:range rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#qualification"/>
+        <rdfs:comment>this states which Qualifications are needed on a task for this task to be executed
+
+currently this is only imported but not used in the simulation
+
+add this property multiple times to link multiple Qualifications</rdfs:comment>
     </owl:ObjectProperty>
     
 
@@ -97,7 +107,11 @@
         <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskSpecifications"/>
         <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
         <rdfs:range rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
-        <rdfs:comment>if a task needs multiple resources of the same type, use this property multiple times, each time for every needed resource of that type</rdfs:comment>
+        <rdfs:comment>use this to link the needed RsourceTypes on this task
+
+use this multiple times for every Resource Type that is needed
+
+if a task needs multiple resources of the same type, use this property multiple times, each time for every needed resource of that type</rdfs:comment>
     </owl:ObjectProperty>
     
 
@@ -160,7 +174,9 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#hasName">
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-        <rdfs:comment>some Name Specification, every Class has exactly one of these relations</rdfs:comment>
+        <rdfs:comment>some Name Specification, every Class has exactly one of these relations 
+
+every instance needs a value along the proeprty of the certain class to be recognized by the importer</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -168,7 +184,9 @@
     <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#hasPriority -->
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#hasPriority">
-        <rdfs:comment>some priority specification as Integer</rdfs:comment>
+        <rdfs:comment>some priority specification as Integer, is used to prioritize some events or tasks over others, for more information the implementation needs to be checked
+
+when writing this these values are only used in comparators defined in the workflow class</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -190,12 +208,14 @@
     <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#limitedNumber -->
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#limitedNumber">
-        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#occasions"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceSpecifications"/>
         <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
         <rdfs:comment>dies bedeutet, dass beim importieren die entsprechende Anzahl an Resourcen dieses Typs erstellt wird. Ist der Ressourcen Typ zb &quot;Formular&quot; und der übergebene Integer ist 100, werden 100 Instanzen eines Formulars erstellt.
 
-Nur ganze positive Zahlen angeben</rdfs:comment>
+Nur ganze positive Zahlen angeben
+
+0 für unlimitierten ResourcenZugriff</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -207,21 +227,14 @@ Nur ganze positive Zahlen angeben</rdfs:comment>
         <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#positiveInteger"/>
         <rdfs:comment>dies kann auch genutzt werden um für Resourcen des gleichen Typs unterschiedliche Werte festzulegen. Dafür muss diese Propertie an dem jeweiligen Resourcen Individuum spezifiziert werden. Ein Wert entlang dieser Property an einem Individuum Resource überschreibt für das Individuum den Wert der für den Resourcen Typen festeglegt wurde</rdfs:comment>
-        <rdfs:comment>eine 1 bedeutet dass die Resource nur ein einziges Mal verwendet werden kann und dann vernichtet wird (z.B. Formular)
+        <rdfs:comment>wird dies für einen resourcen Typen angegeben, wird dies für alle Resourcen des Typs angewendet, die keinen eigenen Wert für diese Propertie haben</rdfs:comment>
+        <rdfs:comment>wird diese property bei resource type nicht verwendet, wird kann die erstellte Resource beliebig oft verwendet werden
 
-eine 0 bedeutet dass die Resource beliebig oft verwendet werden kann z.B. (Rettungswagen)
+eine 1 bedeutet dass die Resource nur ein einziges Mal verwendet werden kann und dann vernichtet wird (z.B. Formular)
+
+eine 0 bedeutet dass die Resource beliebig oft verwendet werden kann z.B. (Rettungswagen), 
 
 eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese nicht mehr genutzt werden kann</rdfs:comment>
-        <rdfs:comment>wird dies für einen resourcen Typen angegeben, wird dies für alle Resourcen des Typs angewendet, die keinen eigenen Wert für diese Propertie haben</rdfs:comment>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#occasions -->
-
-    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#occasions">
-        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceSpecifications"/>
-        <rdfs:comment>wenn keine dieser Subproperties spezifiziert wird, werden die Individuen erstellt, welche die propertie isOfResourceType haben, die den entsprechenden Resourcen Typ hat</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -281,26 +294,6 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
     
 
 
-    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskIsEndTask -->
-
-    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskIsEndTask">
-        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskSpecificationDataProperty"/>
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskIsStartTask -->
-
-    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskIsStartTask">
-        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskSpecificationDataProperty"/>
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
-    </owl:DatatypeProperty>
-    
-
-
     <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskPriority -->
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskPriority">
@@ -314,17 +307,6 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
     <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskSpecificationDataProperty -->
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskSpecificationDataProperty"/>
-    
-
-
-    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#unlimited -->
-
-    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#unlimited">
-        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#occasions"/>
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
-        <rdfs:comment>wenn unlimited &quot;true&quot;, bedeutet das, dass imemr wenn eine Afugabe diese Resource benötigt ist sie verfügbar. Zum Beispiel Formulare auf dem Amt. Wenn dies true ist, müssen keine Individuen für Resourcen dieses Typs erstellt werden, diese werden nicht berücksichtigt.</rdfs:comment>
-    </owl:DatatypeProperty>
     
 
 
@@ -355,37 +337,16 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
     
 
 
-    <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#condition -->
-
-    <owl:Class rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#condition"/>
-    
-
-
     <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#event -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#event">
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#eventHasName"/>
-                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#eventHasStartTime"/>
-                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#eventPriority"/>
-                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:comment>when adding instances for this class, keep in mind to fullfill all rules mentioned via SubClassOf. For explanation refer to https://protegeproject.github.io/protege/class-expression-syntax/</rdfs:comment>
+        <rdfs:comment>a class for the events that cycle from start to endTasks
+
+any instance of this cclass needs the name property to be recognized by the importer
+
+also required is the startTime and the priority property
+
+as currently only one workflow is supported, every event will be scheduled to this workflow at the specified startTime</rdfs:comment>
     </owl:Class>
     
 
@@ -393,14 +354,11 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
     <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#person -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#person">
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#personHasName"/>
-                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:comment>when adding instances for this class, keep in mind to fullfill all rules mentioned via SubClassOf. For explanation refer to https://protegeproject.github.io/protege/class-expression-syntax/</rdfs:comment>
+        <rdfs:comment>a class for persons, every instance needs the name property to be recognized by the importer
+
+there is the personHasQualification property to link Qualifications to Persons
+
+persons do get imported but the use is not implemented in simulation and is a TODO</rdfs:comment>
     </owl:Class>
     
 
@@ -408,13 +366,9 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
     <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#qualification -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#qualification">
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#qualificationHasName"/>
-                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
+        <rdfs:comment>a qualification is something a person needs to have to be capable of working on a task that requires certain qualifications. you need to have the name property for every instance for the importer to recognize instances of this class
+
+currently this is not implemented, but the necessary proeprties to add this to a task are given via taskHasQualification.</rdfs:comment>
     </owl:Class>
     
 
@@ -422,12 +376,10 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
     <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType">
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceTypeHasName"/>
-                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
+        <rdfs:comment>this is used to specify resources of a certain type. it needs the name property for this class at least to be recognized by the importer
+with no further specfications this this resource tpe is treated as descirbing a unlimited resourcetype
+you can specify limitedNumber property with a int &gt; 0 and there will be this number of resources created of this type
+specify numberOfUse with a int &gt; 0 and a resource can be used this certain amount of time (not implemented yet)</rdfs:comment>
     </owl:Class>
     
 
@@ -435,50 +387,36 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
     <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#task">
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskHasName"/>
-                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskHasTimeNeeded"/>
-                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskPriority"/>
-                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskIsEndTask"/>
-                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
-                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#taskIsStartTask"/>
-                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
-                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:comment>keep in mind that tasks that are not end Task ened to the property isFollowedBy to be assigned</rdfs:comment>
-        <rdfs:comment>when adding instances for this class, keep in mind to fullfill all rules mentioned via SubClassOf. For explanation refer to https://protegeproject.github.io/protege/class-expression-syntax/</rdfs:comment>
+        <rdfs:comment>this is a class for the tasks
+
+any instance needs the name property to be recognized by the importer
+
+also required are the properties taskTimeNeeded, taskPriority
+
+a task can have multiple isFollowedBy hasPredecessor, hasQualification needs Resource.
+
+if no followed By or has Predecessor the task is not part of a workflow, as there is no connection
+if no followedBy, this is a endTask
+if no hasPredecessor this is a startTask
+
+there can be only one startTask in one workflow at this time so multiple task with no predecessor will result in errors
+
+to specify that there are multiple resources, qualification needed or tasks linked, use the certain property multiple times and link the instances</rdfs:comment>
     </owl:Class>
     
 
 
     <!-- http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#workflow -->
 
-    <owl:Class rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#workflow"/>
+    <owl:Class rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#workflow">
+        <rdfs:comment>this is a class for the workflows
+
+any instance of this class needs the name property to be recognized by the importer
+
+also you need to provide a link to the start task
+
+currently only one workflow is supported, so do not add multiple instances of the workflow unless you checked the implementation</rdfs:comment>
+    </owl:Class>
     
 
 
@@ -578,7 +516,6 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:AdmissionDetails">
         <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
         <untitled-ontology-10:resourceTypeHasName>AdmissionDetails</untitled-ontology-10:resourceTypeHasName>
-        <untitled-ontology-10:unlimited rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:unlimited>
     </owl:NamedIndividual>
     
 
@@ -588,7 +525,6 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:AllergyDetails">
         <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
         <untitled-ontology-10:resourceTypeHasName>Allergy details</untitled-ontology-10:resourceTypeHasName>
-        <untitled-ontology-10:unlimited rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:unlimited>
     </owl:NamedIndividual>
     
 
@@ -598,7 +534,6 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Consent_form">
         <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
         <untitled-ontology-10:resourceTypeHasName>Consent_form</untitled-ontology-10:resourceTypeHasName>
-        <untitled-ontology-10:unlimited rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:unlimited>
     </owl:NamedIndividual>
     
 
@@ -608,7 +543,6 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Diet_Details">
         <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
         <untitled-ontology-10:resourceTypeHasName>Diet_Details</untitled-ontology-10:resourceTypeHasName>
-        <untitled-ontology-10:unlimited rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:unlimited>
     </owl:NamedIndividual>
     
 
@@ -618,7 +552,6 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Lab_test">
         <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
         <untitled-ontology-10:resourceTypeHasName>Lab_test</untitled-ontology-10:resourceTypeHasName>
-        <untitled-ontology-10:unlimited rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:unlimited>
     </owl:NamedIndividual>
     
 
@@ -628,7 +561,6 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:PatientsDetails">
         <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
         <untitled-ontology-10:resourceTypeHasName>Patient&apos;s details</untitled-ontology-10:resourceTypeHasName>
-        <untitled-ontology-10:unlimited rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:unlimited>
     </owl:NamedIndividual>
     
 
@@ -638,7 +570,6 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Patients_file">
         <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
         <untitled-ontology-10:resourceTypeHasName>Patient&apos;s file</untitled-ontology-10:resourceTypeHasName>
-        <untitled-ontology-10:unlimited rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:unlimited>
     </owl:NamedIndividual>
     
 
@@ -648,7 +579,6 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Present_medications">
         <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
         <untitled-ontology-10:resourceTypeHasName>Present medications</untitled-ontology-10:resourceTypeHasName>
-        <untitled-ontology-10:unlimited rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:unlimited>
     </owl:NamedIndividual>
     
 
@@ -658,7 +588,6 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Signed_form">
         <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
         <untitled-ontology-10:resourceTypeHasName>Signed_form</untitled-ontology-10:resourceTypeHasName>
-        <untitled-ontology-10:unlimited rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:unlimited>
     </owl:NamedIndividual>
     
 
@@ -678,7 +607,6 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Surgical_dress">
         <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#resourceType"/>
         <untitled-ontology-10:resourceTypeHasName>Surgical_dress</untitled-ontology-10:resourceTypeHasName>
-        <untitled-ontology-10:unlimited rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:unlimited>
     </owl:NamedIndividual>
     
 
@@ -720,7 +648,6 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
         <untitled-ontology-10:taskNeedsResource rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Stethoscope"/>
         <untitled-ontology-10:taskHasName>Medical_examination</untitled-ontology-10:taskHasName>
         <untitled-ontology-10:taskHasTimeNeeded rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">15</untitled-ontology-10:taskHasTimeNeeded>
-        <untitled-ontology-10:taskIsStartTask rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:taskIsStartTask>
         <untitled-ontology-10:taskPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1</untitled-ontology-10:taskPriority>
     </owl:NamedIndividual>
     
@@ -735,7 +662,6 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
         <untitled-ontology-10:taskNeedsResource rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#ResourceType:Surgical_dress"/>
         <untitled-ontology-10:taskHasName>Patient_preparation</untitled-ontology-10:taskHasName>
         <untitled-ontology-10:taskHasTimeNeeded rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">10</untitled-ontology-10:taskHasTimeNeeded>
-        <untitled-ontology-10:taskIsEndTask rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-10:taskIsEndTask>
         <untitled-ontology-10:taskPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1</untitled-ontology-10:taskPriority>
     </owl:NamedIndividual>
     
@@ -796,10 +722,26 @@ eine Zahl &gt; 1 gibt die Anzahl der Nutzungen für eine Resource an bevor diese
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Workflow:PatientStuff">
         <rdf:type rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#workflow"/>
-        <untitled-ontology-10:endTaskIs rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Task:Patient_preparation"/>
         <untitled-ontology-10:startTaskIs rdf:resource="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#Task:Medical_examination"/>
         <untitled-ontology-10:workflowHasName>workflow one</untitled-ontology-10:workflowHasName>
     </owl:NamedIndividual>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotations
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description rdf:about="http://www.semanticweb.org/maxsp/ontologies/2023/11/untitled-ontology-10#interarrivalTime">
+        <rdfs:comment>some idea for the future, there may be a specification along this proerty as kind of sim setting, such that you dont have to model the simtime where events occur. instead u pass some functionthat is used to calculate some sort of interarrival time
+
+
+yet there is no implementeation for this</rdfs:comment>
+    </rdf:Description>
 </rdf:RDF>
 
 

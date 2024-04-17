@@ -59,15 +59,13 @@ public class EntityManager {
 
 	public static void addWorkflow(
 		String name,
-		String startTask,
-		String endTask
+		String startTask
 	) {
 
 		if (allWorkflows.isEmpty()) {
 			Workflow workflow = new Workflow(
 				name,
-				allTasks.get(startTask),
-				allTasks.get(endTask)
+				allTasks.get(startTask)
 			);
 			allWorkflows.put(name, workflow);
 			EntityManager.workflow = workflow;
@@ -75,7 +73,7 @@ public class EntityManager {
 		} else {
 			Printer.errorPrint(
 				Sources.EntityManager.name(),
-				"Only one worflow is tested and implemented for use, this ontology contains more than one Workflow"
+				"Only one workflow is tested and implemented for use, this ontology contains more than one Workflow"
 			);
 		}
 	}
@@ -127,12 +125,20 @@ public class EntityManager {
 		}
 	}
 
-	public static void addResourceType(String name, boolean unlimitedResource, int limitedNumber)
+	/**
+	 * adds a Resource Type Instance to the Entity Manager
+	 * @param name name of the ResourceType
+	 * @param limitedNumber	limitedNumber of the Resource int > 0 => instantiating this number of resources, 0
+	 * @throws IllegalStateException
+	 */
+	public static void addResourceType(String name, int limitedNumber)
 		throws IllegalStateException {
 		if(allResourceTypes.containsKey(name)){
 			Printer.errorPrint(Sources.EntityManager.name(), "there is already a ResourceType with name "+ name +" a second one will not be imported");
 		}else{
-			allResourceTypes.put(name, new ResourceType(name, unlimitedResource, limitedNumber));
+			if(limitedNumber < 0)
+				throw new IllegalStateException("no negative Number allowed for the limited Number of occasiosn of a resource Type  : "+ name);
+			allResourceTypes.put(name, new ResourceType(name, limitedNumber));
 		}
 
 	}

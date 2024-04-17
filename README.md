@@ -62,6 +62,9 @@ properties are not used on the instance as they cant be used in the simulation e
 This may be a reason for the importer to stop execution as missing Instances in the ontology may lead to faulty execution of
 the simulation which nobody needs. Error prints are trying to give information on what caused the importer to stop execution
 
+the path for the ontology is to be set in this file
+
+
 This README provides information about what properties are needed for classes and which are optional.  
 ***Always bear in mind that it can only be simulated what is modelled in the .owl***
 

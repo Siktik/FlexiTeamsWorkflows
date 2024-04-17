@@ -100,12 +100,11 @@ public class Workflow {
 	 */
 	private PriorityBlockingQueue<Event> queuedEvents;
 
-	public Workflow(String name, Task startTask, Task endTask) {
+	public Workflow(String name, Task startTask) {
 		this.id = idCounter++;
 		queuedEvents = new PriorityBlockingQueue<Event>(1, comparingEvents);
 		this.name = name;
 		this.startTask = startTask;
-		this.endTask = endTask;
 
 		workflowMainThread = new Thread(this::runWorkflow);
 	}
@@ -162,14 +161,30 @@ public class Workflow {
 			"##################################################\n" +
 			"##################################################\n"
 		);
-
+		int stop = 0;
 		while (working) {
 			planExecution();
 			startExecution();
+			if(!checkingStopCriteria) {
+				if (runningTasks.isEmpty()) {
+					checkingStopCriteria = true;
+					stop = TimeManager.getSimTime();
+				}
+			}else
+				if(TimeManager.getSimTime() - stop > 30) {
+					System.out.println("\n##################################################\n" +
+							"##################################################\n" +
+							"############## Finishing SIMULATION ###############\n" +
+							"############## AT SIM_TIME: " +
+							TimeManager.getSimTime() +
+							"      ###############\n" +
+							"##################################################\n" +
+							"##################################################\n");
+					break;
+				}
 		}
-		Thread.currentThread().interrupt();
 	}
-
+	boolean checkingStopCriteria= false;
 	/**
 	 * Details in README
 	 */
@@ -362,7 +377,9 @@ public class Workflow {
 					if(waitingTasks.get(taskName).isEmpty())
 						toDelete.add(taskName);
 					freeTasks.remove(taskName);
+					checkingStopCriteria = false;
 					runningTasks.put(taskName, trc);
+
 					Printer.print(
 							trc.event.getName(),
 							"starting " + taskName + " needs: " + trc.getTask().getTimeNeeded() + " seconds"
@@ -417,19 +434,12 @@ public class Workflow {
 		}
 	};
 
-	/**
-	 * a helper class to map currently running tasks, the thread that is executing this task and the event that is currently
-	 * at this task in one object
-	 */
 	@Override
 	public String toString() {
-		return (
-				"Workflow{" +
-						"startTask=" +
-						startTask.getName() +
-						", endTask=" +
-						endTask.getName() +
-						'}'
-		);
+		return "Workflow{" +
+				"startTask=" + startTask +
+				", id=" + id +
+				", name='" + name + '\'' +
+				'}';
 	}
 }

@@ -168,9 +168,7 @@ public class Importer {
 
 	private static void importWorkflow() {
 		ResIterator iterator = retrieveIterator(workflowName);
-		Property endTaskIsProperty = ontModel.getProperty(
-			ontologyPrefix + PropertyTypes.isEndOfWorkflow
-		);
+
 		Property startTaskIsProperty = ontModel.getProperty(
 			ontologyPrefix + PropertyTypes.isStartOfWorkflow
 		);
@@ -182,29 +180,13 @@ public class Importer {
 				.getObject()
 				.asLiteral()
 				.getString();
-			Statement endTaskIsStatement = resource.getProperty(
-				endTaskIsProperty
-			);
+
 			Statement startTaskIsStatement = resource.getProperty(
 				startTaskIsProperty
 			);
 			String startTaskName = "";
-			String endTaskName = "";
 
-			if (endTaskIsStatement != null) {
-				endTaskName = endTaskIsStatement
-					.getResource()
-					.getProperty(taskName)
-					.getObject()
-					.asLiteral()
-					.getString();
-			} else {
-				Printer.errorPrint(
-					Sources.Importer.name(),
-					"No endTask specified for workflow " + name + " terminating"
-				);
-				System.exit(-1);
-			}
+
 			if (startTaskIsStatement != null) {
 				startTaskName = startTaskIsStatement
 					.getResource()
@@ -222,7 +204,7 @@ public class Importer {
 				System.exit(-1);
 			}
 
-			EntityManager.addWorkflow(name, startTaskName, endTaskName);
+			EntityManager.addWorkflow(name, startTaskName);
 		}
 	}
 
@@ -231,9 +213,7 @@ public class Importer {
 	 */
 	private static void importResourceTypes() {
 		ResIterator iterator = retrieveIterator(resourceTypeName);
-		Property unlimitedResources = baseModel.getProperty(
-			ontologyPrefix + PropertyTypes.unlimitedResource
-		);
+
 		Property limitedNumber = baseModel.getProperty(ontologyPrefix + PropertyTypes.limitedNumber);
 
 		while (iterator.hasNext()) {
@@ -241,37 +221,18 @@ public class Importer {
 			Statement statement = resource.getProperty(resourceTypeName);
 
 			String name = statement.getObject().asLiteral().getString();
-			boolean unlimitedResource = false;
 			int limitedNumberValue = 0;
-			Statement unlimitedResourceStatement = resource.getProperty(
-				unlimitedResources
-			);
+
 			Statement limitedNumberStatement = resource.getProperty(limitedNumber);
 
-			if(unlimitedResourceStatement == null && limitedNumber == null){
-				Printer.errorPrint(Sources.Importer.name(), "couldnt import a resourceType with name "+ name +
-						" :: it seems like there is no specification for the occasion type");
-				continue;
-			}
-
-			if (unlimitedResourceStatement != null) {
-				unlimitedResource = unlimitedResourceStatement
-					.getObject()
-					.asLiteral()
-					.getBoolean();
-			}
-			if(limitedNumberStatement != null){
+			if(limitedNumber == null){
+				Printer.errorPrint(Sources.Importer.name(), "No limitedNumber for Resource of Type" + name+", treating this as unlimited Resource now");
+			}else if(limitedNumberStatement != null){
 				limitedNumberValue = limitedNumberStatement.getObject().asLiteral().getInt();
 			}
-			if(unlimitedResource && limitedNumberValue > 0){
-				Printer.errorPrint(Sources.Importer.name(), "couldn't import a resourceType with name "+ name +
-						"\nit seems like there are two occasion types specified, it is rather unlimited" +
-						"or has a certain numebr of occasions::\n specified unlimited: "+unlimitedResource+ " occasions: "
-				+ limitedNumberValue);
-				continue;
-			}
 
-			EntityManager.addResourceType(name, unlimitedResource, limitedNumberValue);
+
+			EntityManager.addResourceType(name,limitedNumberValue);
 		}
 	}
 
@@ -384,12 +345,6 @@ public class Importer {
 		);
 		Property taskNeedsQualification = baseModel.getProperty(
 			ontologyPrefix + PropertyTypes.taskNeedsQualification
-		);
-		Property taskIsEndTask = baseModel.getProperty(
-			ontologyPrefix + PropertyTypes.taskIsEndTask
-		);
-		Property taskIsStartTask = baseModel.getProperty(
-			ontologyPrefix + PropertyTypes.taskIsStartTask
 		);
 		Property taskIsFollowedBy = baseModel.getProperty(
 			ontologyPrefix + PropertyTypes.taskIsFollowedBy
